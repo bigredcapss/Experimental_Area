@@ -97,4 +97,34 @@ public class JDBCTools
             JDBCTools.releaseSource(connection,statement,null);
         }
     }
+
+    /**
+     * 更新方法
+     * @version: 2.0
+     * @param sql
+     * @param args sql占位符的可变参数
+     */
+    public static void update(String sql ,Object...args)
+    {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try
+        {
+            connection = JDBCTools.getConnection();
+            preparedStatement = connection.prepareStatement(sql);
+            //向占位符填值
+            for (int i = 0; i < args.length; i++)
+            {
+                preparedStatement.setObject(i+1,args[i]);
+            }
+            preparedStatement.executeUpdate();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }finally
+        {
+            JDBCTools.releaseSource(connection,preparedStatement,null);
+        }
+    }
 }
