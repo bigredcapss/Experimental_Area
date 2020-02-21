@@ -12,7 +12,7 @@ import java.util.List;
 
 
 /**
- * @Description:
+ * @Description:1）Dao测试；2）获取自动生成的主键；3）读写Blob类型的数据
  * @Author:BigRedCaps
  */
 public class JDBCTestThree

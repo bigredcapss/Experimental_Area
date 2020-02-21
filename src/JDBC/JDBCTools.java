@@ -127,4 +127,58 @@ public class JDBCTools
             JDBCTools.releaseSource(connection,preparedStatement,null);
         }
     }
+
+    /**
+     * 开启事务
+     * @param connection
+     */
+    public static void beginTransaction(Connection connection)
+    {
+        if(connection!=null)
+        {
+            try
+            {
+                connection.setAutoCommit(false);
+            } catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 提交事务
+     * @param connection
+     */
+    public static void commit(Connection connection)
+    {
+        if(connection!=null)
+        {
+            try
+            {
+                connection.commit();
+            } catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 回滚事务
+     * @param connection
+     */
+    public static void rollback(Connection connection)
+    {
+        if(connection!=null)
+        {
+            try
+            {
+                connection.rollback();
+            } catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 }
