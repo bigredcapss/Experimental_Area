@@ -189,11 +189,11 @@ public class JDBCTestOne
     @Test
     public void UpdateTest()
     {
-        String sql1 = "insert into customers (name,email,birth) value ('qiuqiu','qiuqiu@gmail.com','2000-09-06')";
+        String sql1 = "insert into customers (name,email,birth) value ('听听','qiuqiu@gmail.com','2000-09-06')";
         String sql2 = "update customers set name = 'bilibili' where id = 2";
         String sql3 = "delete from customers where id = 3";
 
-        update(sql2);
+        update(sql1);
     }
 
     //ResultSet，
