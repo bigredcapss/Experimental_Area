@@ -5,10 +5,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.junit.Test;
 
-import javax.sound.midi.Soundbank;
 import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;

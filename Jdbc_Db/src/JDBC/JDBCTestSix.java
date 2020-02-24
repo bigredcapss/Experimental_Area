@@ -1,13 +1,11 @@
 package JDBC;
 
-import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 import org.apache.commons.dbutils.QueryLoader;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.*;
 import org.junit.Test;
 
-import javax.xml.ws.handler.Handler;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;

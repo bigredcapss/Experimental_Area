@@ -17,7 +17,7 @@ public interface IDBUtilsDAO<T>
      * @param sql
      * @param args
      */
-    void update(Connection connection,String sql,Object...args);
+    void update (Connection connection, String sql, Object... args);
 
     /**
      * 返回T的一条记录
@@ -26,7 +26,7 @@ public interface IDBUtilsDAO<T>
      * @param args
      * @return
      */
-    T get(Connection connection,String sql,Object...args) throws SQLException;
+    T get (Connection connection, String sql, Object... args) throws SQLException;
 
     /**
      * 返回T的一个集合
@@ -35,7 +35,7 @@ public interface IDBUtilsDAO<T>
      * @param args
      * @return
      */
-    List<T> getForList(Connection connection,String sql,Object...args);
+    List<T> getForList (Connection connection, String sql, Object... args);
 
     /**
      * 返回具体的一个值
@@ -45,7 +45,7 @@ public interface IDBUtilsDAO<T>
      * @param <E>
      * @return
      */
-    <E> E getForValue(Connection connection,String sql,Object...args);
+    <E> E getForValue (Connection connection, String sql, Object... args);
 
     /**
      * 批量处理
@@ -53,6 +53,6 @@ public interface IDBUtilsDAO<T>
      * @param sql
      * @param args
      */
-    void batch(Connection connection,String sql,Object[]...args);
+    void batch (Connection connection, String sql, Object[]... args);
 
 }

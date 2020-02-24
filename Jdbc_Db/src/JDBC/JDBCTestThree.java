@@ -1,6 +1,5 @@
 package JDBC;
 
-import jdk.nashorn.internal.scripts.JD;
 import org.junit.Test;
 
 import java.io.FileInputStream;
