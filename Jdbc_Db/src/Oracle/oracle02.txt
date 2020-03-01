@@ -1,0 +1,775 @@
+﻿目标：
+
+1）掌握多行函数与分组操作
+
+2）掌握多表查询与子查询
+
+3）理解集合查询与掌握Oracle分页语法
+
+4）理解创建、修改和删除表和表约束
+
+
+-------------------------------------------------------------------------------------准备篇
+
+
+col empno for 9999;
+col ename for a10;
+col job for a10;
+col mgr for 9999;   
+col hiredate for a12;
+col sal for 9999;
+col comm for 9999;
+col deptno for 99;
+set pagesize 20;
+col tname for a20;
+set pagesize 80; 
+
+
+-------------------------------------------------------------------------------------通用函数和条件判断函数
+
+
+使用NVL(a,b)通用函数，统计员工年收入，NVL()作用于任何类型，即(number/varchar2/date)
+通用函数：参数类型可以是number或varchar2或date类型
+select ename,sal*12+NVL(comm,0) from emp;
+
+使用NVL2(a,b,c)通用函数，如果a不为NULL，取b值，否则取c值，统计员工年收入 
+select ename,sal*12+NVL2(comm,comm,0) from emp;
+
+使用NULLIF(a,b)通用函数，在类型一致的情况下，如果a与b相同，返回NULL，否则返回a，比较10和10.0是否相同
+select NULLIF(10,'10') from dual;
+
+使用SQL99标准通用语法中的case表达式，将职位是分析员的，工资+1000；职位是经理的，工资+800；职位是其它的，工资+400
+case 字段 
+     when 条件1 then 表达式1
+     when 条件2 then 表达式2
+     else 表达式n
+end 
+课后请参考<MySQL5.X的手册>-12.2这个章节
+select ename "姓名",job "职位",sal "涨前工资",
+       case job
+	    when 'ANALYST' then sal+1000
+	    when 'MANAGER' then sal+800
+            else sal+400
+       end "涨后工资"
+from emp; 
+
+使用oracle专用语法中的decode()函数，职位是分析员的，工资+1000；职位是经理的，工资+800；职位是其它的，工资+400
+decode(字段,条件1,表达式1,条件2,表达式2,...表达式n)
+select ename "姓名",job "职位",sal "涨前工资",
+       decode(job,'ANALYST',sal+1000,'MANAGER',sal+800,sal+400) "涨后工资"
+from emp; 
+
+单引号出现的地方如下：
+1）字符串，例如：'hello'
+2）日期型，例如：'17-12月-80'
+3）to_char/to_date(日期,'YYYY-MM-DD HH24:MI:SS')
+
+双引号出现的地方如下：
+1）列别名，例如：select ename "姓 名" from emp
+2）to_char/to_date(日期,'YYYY"年"MM"月"DD"日" HH24:MI:SS')‘’号中的英文字符大小写不敏感
+
+
+-------------------------------------------------------------------------------------多行函数
+
+
+函数：oracle服务器先事写好的一段具有一定功能的程序片段，内置于oracle服务器，供用户调用 
+单行函数：输入一个参数，输出一个结果，例如：upper('baidu.com')->BAIDU.COM
+多行函数：输入多个参数，或者是内部扫描多次，输出一个结果，例如：count(*)->14
+
+统计emp表中员工总人数
+select count(*) from emp;
+*号适用于表字段较少的情况下，如果字段较多，扫描多间多，效率低，项目中提倡使用某一个非null唯一的字段，通常是主键 
+
+统计公司有多少个不重复的部门
+select count(distinct deptno) from emp;
+
+统计有佣金的员工人数
+select count(comm) from emp;
+注意：今天讲的这些多个行函数，不统计NULL值
+
+员工总工资，平均工资，四舍五入，保留小数点后0位
+select sum(sal) "总工资",round(avg(sal),0) "平均工资"
+from emp;
+
+查询员工表中最高工资，最低工资
+select max(sal) "最高工资",min(sal) "最低工资"
+from emp;
+
+入职最早，入职最晚员工
+select max(hiredate) "最晚入职时间",min(hiredate) "最早入职时间"
+from emp;
+
+多行函数：count/sum/avg/max/min
+
+按部门求出该部门平均工资，且平均工资取整数，采用截断
+select deptno "部门编号",trunc(avg(sal),0) "部门平均工资"
+from emp
+group by deptno;
+
+(继续)查询部门平均工资大于2000元的部门
+select deptno "部门编号",trunc(avg(sal),0) "部门平均工资"
+from emp
+group by deptno
+having trunc(avg(sal),0) > 2000; 
+
+(继续)按部门平均工资降序排列
+select deptno "部门编号",trunc(avg(sal),0) "部门平均工资"
+from emp
+group by deptno
+having trunc(avg(sal),0) > 2000
+order by 2 desc;
+
+除10号部门外，查询部门平均工资大于2000元的部门，方式一【having deptno<>10】
+select deptno,avg(sal)
+from emp
+group by deptno
+having deptno<>10;
+
+除10号部门外，查询部门平均工资大于2000元的部门，方式二【where deptno<>10】
+select deptno,avg(sal)
+from emp
+where deptno<>10
+group by deptno;
+提倡
+
+显示部门平均工资的最大值
+select max(avg(sal)) "部门平均工资的最大值"
+from emp
+group by deptno;
+
+思考：显示部门平均工资的最大值和该部门编号?
+select max(avg(sal)) "部门平均工资的最大值",deptno "部门编号"
+from emp
+group by deptno;
+错误
+
+group by 子句的细节：
+1）在select子句中出现的非多行函数的所有列，【必须】出现在group by子句中
+2）在group by子句中出现的所有列，【可出现可不现】在select子句中
+
+where和having的区别：
+where：
+1）行过滤器
+2）针对原始的记录
+3）跟在from后面
+4）where可省
+5）先执行
+
+having：
+1）组过滤器
+2）针对分组后的记录
+3）跟在group by后面
+4）having可省
+5）后执行
+
+oracle中综合语法：
+1）select子句-----必须
+2）from子句-------必须，不知写什么表了，就写dual
+3）where子句------可选
+4）group by子句---可选
+5）having子句-----可选
+6）order by 子句--可选，如果出现列名，别名，表达式，字段
+
+
+-------------------------------------------------------------------------------------多表查询
+
+
+员工表emp和部门表dept的笛卡尔集（笛卡尔集表=列数之和，行数之积，笛卡尔集表内中有些数据是不符合要求的）
+select emp.ename,dept.dname
+from emp,dept;
+
+使用等值连接/内连接（只能使用=号），显示员工的编号，姓名，部门名，使用表别名简化
+select emp.empno,emp.ename,dept.dname,dept.deptno
+from emp,dept
+where emp.deptno = dept.deptno;
+
+使用非等值连接（不能使用=号，其它符号可以，例如：>=，<=，<>，betwen and等），显示员工的编号，姓名，月薪，工资级别
+select e.empno,e.ename,e.sal,s.grade
+from emp e,salgrade s
+where e.sal between s.losal and s.hisal;
+
+内连接查询：只能查询出符合条件的记录
+外连接查询：既能查询出符合条件的记录，也能根据一方强行将另一个方查询出来
+
+使用外连接，按部门10,20,30,40号，统计各部门员工人数，要求显示部门号，部门名，人数
+部门号 部门名        人数
+10     ACCOUNTING    3 
+20     RESEARCH      5
+30     SALES         6
+40     OPERATIONS    0
+
+等值连接/非等值连接/内连接：只会查询出多张表中，根据某个字段匹配，符合条件的记录，不符合条件的记录是不会存在的
+
+左外连接[是oracle专用的，不是SQL99规则]：
+select dept.deptno "部门号",dept.dname "部门名",count(emp.empno) "人数"
+from dept,emp
+where dept.deptno = emp.deptno(+) 
+group by dept.deptno,dept.dname;
+
+右外连接：
+select dept.deptno "部门号",dept.dname "部门名",count(emp.empno) "人数"
+from dept,emp
+where emp.deptno(+) = dept.deptno
+group by dept.deptno,dept.dname;
+
+使用左外连接，按部门10,20,30,40号，统计各部门员工人数，要求显示部门号，部门名，人数，且按人数降序排列
+select dept.deptno "部门号",dept.dname "部门名",count(emp.empno) "人数"
+from dept,emp
+where dept.deptno = emp.deptno(+) 
+group by dept.deptno,dept.dname
+order by 3 desc;
+
+使用自连接，显示"SMITH的上级是FORD"这种格式
+select users.ename || '的上级是' ||boss.ename
+from emp users,emp boss
+where users.mgr = boss.empno;
+只有13条记录，不含有KING
+
+基于上述问题，将KING的上级是“”显示出来
+select users.ename || '的上级是' ||boss.ename
+from emp users,emp boss
+where users.mgr = boss.empno(+);
+14条记录
+注意：自连接也用到内连接和外连接
+
+
+-------------------------------------------------------------------------------------子查询
+
+
+子查询的作用：查询条件未知的事物
+
+查询条件已知的问题：例如：查询工资为800的员工信息
+查询条件未知的问题：例如：查询工资为20号部门平均工资的员工信息
+一个条件未知的问题，可以分解为多个条件已知的问题
+
+查询工资比WARD高的员工信息
+第一：查询WARD的工资?
+      select sal from emp where ename = 'WARD';
+
+第二：查询工资比1250高的员工信息？
+      select * from emp where sal > 1250;
+
+子查询：
+        select * 
+	from emp 
+	where sal > (
+	    select sal 
+	    from emp 
+	    where ename = 'WARD'
+	);
+
+查询部门名为'SALES'的员工信息（方式一：子查询）
+
+第一：查询部门名为'SALES'的编号？
+      select deptno from dept where dname = 'SALES';
+第二：查询部门号为30的员工信息？ 
+      select * from emp where deptno = 30;
+子查询：
+      select * 
+      from emp 
+      where deptno = (
+	  select deptno 
+	  from dept 
+	  where dname = 'SALES'
+      );
+
+子查询细节：
+1）子查询与父查询可以针对同一张表 
+2）子查询与父查询可以针对不同张表
+3) 子查询与父查询在传统参数时，数量要相同
+4) 子查询与父查询在传统参数时，类型要相同
+5) 子查询与父查询在传统参数时，含义要相同
+
+查询部门名为'SALES'的员工信息（方式二：多表查询）
+select emp.*
+from dept,emp
+where (dept.deptno=emp.deptno) and (dept.dname='SALES'); 
+
+查询每个员工编号,姓名，部门名,工资等级（三表查询，这三张表并无外健关联）
+select e.empno,e.ename,d.dname,s.grade
+from emp e,dept d,salgrade s
+where (e.deptno=d.deptno) and (e.sal between s.losal and s.hisal);
+
+查询工资最低的员工信息（单行子查询，使用=号）
+第一：查询出工资最低是多少？
+      select min(sal) from emp;
+第二：查询工资为800的员工信息？
+      select * from emp where sal = 800;
+子查询：
+      select * 
+      from emp 
+      where sal = (
+			select min(sal) 
+			from emp
+		  );
+
+查询部门名为'ACCOUNTING'或'SALES'的员工信息（多行子查询，使用in关键字）	
+第一：查询部门名为'ACCOUNTING'或'SALES'的部门编号？
+      select deptno from dept where dname in ('ACCOUNTING','SALES');
+第二：查询部门号为10或30号的员工信息？
+      select * from emp where deptno in (10,30);
+子查询：
+      select * 
+      from emp 
+      where deptno in (
+			   select deptno 
+			   from dept 
+	                   where dname in ('ACCOUNTING','SALES')
+   	               );
+
+查询工资比20号部门【任意any】一个员工工资【低<】的员工信息（多行子查询，使用any关键字） 
+第一：查询20号部门的所有工资？
+      select sal from emp where deptno = 20;
+第二：查询工资比(800,2975,3000,1100,3000)任意一个低的员工信息？
+      select * from emp where sal < any (800,2975,3000,1100,3000);   
+在oracle看来，<any就等于<集合中最大的那个值
+子查询：
+      select * 
+      from emp 
+      where sal <any (
+			select sal 
+			from emp 
+			where deptno = 20
+		      ); 
+
+查询工资比30号部门【所有all】员工【低<】的员工信息（多行子查询，使用all关键字） 
+
+第一：查询出30部门所有员工的工资？    
+      select sal from emp where deptno = 30;
+第二：查询工资比(1600,1250,1250,2850,1500,950)中所有的工资都低的员工信息？
+      select * from emp where sal <all (1600,1250,1250,2850,1500,950);
+子查询：
+      select * 
+      from emp 
+      where sal <all (
+			select sal 
+			from emp 
+			where deptno = 30
+		      );
+
+注意：学员们，不容易理解的几个概念：
+
+单行函数：输入一个参数，输出一个结果
+多行函数：扫描多个参数，输出一个结果
+
+单行子查询：子查询只会返回一个结果，例如：800，父查询用=/<>/>=/<=这些符号来比较
+多行子查询：子查询会返回多于一个结果，例如：30,20，父查询用in/any/all这些符号来比较
+
+当多表查询，子查询同时能解决问题时，按如下优先方案选择：
+
+多表查询-->子查询
+注意：上述结果不是说多表查询可以替代子查询，某些情况下，只能用子查询解决，例如：oracle分页
+
+-------------------------------------------------------------------------------------集合查询
+
+
+使用并集运算，查询20号部门或30号部门的员工信息
+select * from emp where deptno = 20
+union
+select * from emp where deptno = 30;
+注意：
+union：二个集合中，如果都有相同的，取其一
+union all：二个集合中，如果都有相同的，都取
+
+使用set time/timing on，打开时间的开关
+set time on;
+set time off;
+
+使用set tim/timing off，关闭时间的开关
+set timing on;
+set timint off;
+
+使用交集运算[intersect]，查询工资在1000-2000和1500-2500之间的员工信息（方式一）
+select * from emp where sal between 1000 and 2000
+intersect
+select * from emp where sal between 1500 and 2500;
+
+用where行过滤，查询工资在1000-2000和1500-2500之间的员工信息（方式二）
+select * 
+from emp
+where (sal between 1000 and 2000) and (sal between 1500 and 2500);
+
+使用差集运算[minus]，查询工资在1000-2000，但不在1500-2500之间的员工信息（方式一）
+select * from emp where sal between 1000 and 2000
+minus
+select * from emp where sal between 1500 and 2500;
+
+使用where行过滤，查询工资在1000-2000，但不在1500-2500之间的员工信息（方式二）
+select * 
+from emp 
+where (sal between 1000 and 2000) and (sal not between 1500 and 2500);
+
+集合查询的细节：
+1）集合操作时，必须确保集合列数是相等
+select empno,ename,sal,comm from emp where deptno = 20
+union
+select empno,ename,sal from emp where deptno = 30;错
+
+2）集合操作时，必须确保集合列类型对应相同
+select empno,ename,sal,comm from emp where deptno = 20
+union
+select empno,ename,sal,hiredate from emp where deptno = 30;错
+
+3）A union B union C = C union B union A
+select * from emp where deptno = 10
+union
+select * from emp where deptno = 20
+union
+select * from emp where deptno = 30;
+
+4）当多个集合操作时，结果的列名由第一个集合列名决定
+select empno "编号",ename "姓名",sal "薪水" from emp where deptno = 20
+union
+select empno,ename,sal from emp where deptno = 10;
+
+当多表查询，子查询，集合查询都能完成同样任务时，按如下优化方案选择：
+多表查询->子查询->集合查询
+
+
+-------------------------------------------------------------------------------------oracle分页
+
+
+回顾mysql分页
+用limit关键字 
+
+查询users表中前二条记录
+select * from users limit 0,2
+或 
+select * from users limit 2;
+0表示第一条记录的索引号，索引号从0开始
+2表示最多选取二个记录
+
+查询出users前三条记录
+select * from users limit 0,3
+或
+select * from users limit 3
+
+查询出users第2条到第4条记录
+select * from users limit 1,3; 
+
+回顾hibernate分页API
+Query.setFirstResult(0);
+Query.setMaxResult(3);			
+		
+什么是rownum，有何特点
+1）rownum是oracle专用的关健字
+2）rownum与表在一起，表亡它亡,表在它在 
+3）rownum在默认情况下，从表中是查不出来的
+4）只有在select子句中，明确写出rownum才能显示出来
+5）rownum是number类型，且唯一连续
+6）rownum最小值是1，最大值与你的记录条数相同
+7）rownum也能参与关系运算
+   * rownum = 1    有值
+   * rownum < 5    有值	
+   * rownum <=5    有值 		
+   * rownum > 2    无值    	
+   * rownum >=2    无值
+   * rownum <>2    有值	与  rownum < 2 相同
+   * rownum = 2    无值
+8）基于rownum的特性，我们通常rownum只用于<或<=关系运算   
+
+显示emp表中3-8条记录（方式一：使用集合减运算）
+select rownum "伪列",emp.* from emp where rownum<=8
+minus
+select rownum,emp.* from emp where rownum<=2;
+
+显示emp表中3-8条记录（方式二：使用子查询，在from子句中使用，重点）
+select xx.*
+from (select rownum ids,emp.* from emp where rownum<=8) xx 
+where ids>=2;
+注意：在子查询中的别名，不可加""引号
+
+显示emp表中5-9条记录
+select yy.*
+from (select rownum ids,emp.* from emp where rownum<=9) yy
+where ids>=5;
+注意:在项目中，from后台可能有真实表名，也可能用子查询看作的表名，
+     同时真实表和子查询看作的表要做连接查询
+
+
+-------------------------------------------------------------------------------------创建表和约束
+
+
+回顾MySQL创建表语句users(id整型/name字符串/birthday日期型，默认今天)
+drop table if exists users;
+create table if not exists users(
+   id int(5) auto_increment primary key,
+   name varchar(4) not null,
+   birthday date default '2015-4-27'
+);
+
+使用oracleSQL，创建用户表users(id整型/name字符串/birthday日期/sal整型，默认今天)
+create table users(
+  id number(5) primary key,
+  name varchar2(8) not null unique,
+  sal number(6,2) not null,
+  birthday date default sysdate
+);
+
+进入回收站
+drop table users;
+
+查询回收站中的对象
+show recyclebin;
+
+闪回，即将回收站还原
+flashback table 表名 to before drop;
+flashback table 表名 to before drop rename to  新表名;
+
+彻底删除users表
+drop table users purge;
+
+清空回收站
+purge recyclebin;
+	
+测试如下类型
+（1）number(5)：
+insert into users(id,name,sal) values(1,'A',6666.66);     
+insert into users(id,name,sal) values(11,'AA',6666.66);     
+insert into users(id,name,sal) values(111,'AAA',6666.66);     
+insert into users(id,name,sal) values(1111,'AAAA',6666.66);     
+insert into users(id,name,sal) values(99999,'AAAAA',6666.66);     
+insert into users(id,name,sal) values(100000,'AAAAAA',6666.66); 错
+5表示最多存99999    
+
+（2）number(6,2)：
+col sal for 9999.99	
+insert into users(id,name,sal) values(1,'A',6.66);     
+insert into users(id,name,sal) values(11,'AA',66.666);     
+insert into users(id,name,sal) values(111,'AAA',666.6666);     
+insert into users(id,name,sal) values(1111,'AAAA',6666.66666);     
+insert into users(id,name,sal) values(11111,'AAAAA',66666.666666);错 
+number(6,2)
+其中2表示最多显示2位小数，采用四舍五入，不足位数补0，同时要设置col ... for ... 
+其中6表示小数+整数不多于6位
+其中整数位数不得多于4位，可以等于4位
+
+（3）varchar2(8)：
+insert into users(id,name,sal) values(1,'A',7777.77);     
+insert into users(id,name,sal) values(2,'AA',7777.77);     
+insert into users(id,name,sal) values(3,'AAA',7777.77);     
+insert into users(id,name,sal) values(4,'AAAA',7777.77);  
+insert into users(id,name,sal) values(5,'AAAAA',7777.77);  
+insert into users(id,name,sal) values(6,'AAAAAA',7777.77);  
+insert into users(id,name,sal) values(7,'AAAAAAA',7777.77);  
+insert into users(id,name,sal) values(8,'AAAAAAAA',7777.77);  
+insert into users(id,name,sal) values(9,'AAAAAAAAA',7777.77);错
+  
+insert into users(id,name,sal) values(1,'哈',7777.77);     
+insert into users(id,name,sal) values(2,'哈哈',7777.77);     
+insert into users(id,name,sal) values(3,'哈哈哈',7777.77);     
+insert into users(id,name,sal) values(4,'哈哈哈哈',7777.77);  
+insert into users(id,name,sal) values(5,'哈哈哈哈哈',7777.77);错  
+
+8表示字节
+GBK 赵 2字节
+
+（4）date：默认格式为：'27-4月-15'
+（5）CLOB【Character Large OBject】：大文本对象，即超过65565字节的数据对象，最多存储4G
+（6）BLOB【Binary Large OBject】：大二进制对象，即图片，音频，视频，最多存储4G
+
+为emp表增加image列，alter table 表名 add 列名 类型(宽度) 
+alter table emp
+add image blob;
+
+修改ename列的长度为20个字节，alter table 表名 modify 列名 类型(宽度) 
+alter table emp
+modify ename varchar2(20);
+
+删除image列，alter table 表名 drop column 列名
+alter table emp
+drop column image;
+
+重名列名ename为username，alter table 表名 rename column 原列名 to 新列名
+alter table emp
+rename column ename to username;
+
+将emp表重命名emps，rename 原表名 to 新表名
+rename emp to emps;
+
+注意：修改表时，不会影响表中原有的数据
+
+笔试题：有【1000亿】条会员记录，如何用最高效的方式将薪水字段清零，其它字段内容不变？
+
+第一：从emp表中删除sal字段
+      alter table emp 
+      drop column sal;      
+
+第二：向emp表中添加sal字段，且内容默认0
+      alter table emp
+      add sal number(6) default 0;
+
+修改表不可回滚	
+
+创建表customers(单)和orders(多)，使用primary key/not null/unique/default/foreign key约束
+要体现【on delete cascade/on delete set null】
+需求：删除客户，级联删除他所有的订单
+      delete from customers where id = 1;
+需求：删除客户，不级联删除他所有的订单，只是将外健设置为NULL
+      delete from customers where id = 1;	
+
+create table customers(
+  id number(3) primary key,
+  name varchar2(4) not null unique
+);
+insert into customers(id,name) values(1,'A');
+insert into customers(id,name) values(2,'B');
+
+create table orders(
+  id number(3) primary key,
+  isbn varchar2(6) not null unique,
+  price number(3) not null,
+  cid number(3),
+  --constraint cid_FK foreign key(cid) references customers(id) on delete cascade 
+  constraint cid_FK foreign key(cid) references customers(id) on delete set null  
+);
+insert into orders(id,isbn,price,cid) values(1,'isbn10',10,1);
+insert into orders(id,isbn,price,cid) values(2,'isbn20',20,1);
+insert into orders(id,isbn,price,cid) values(3,'isbn30',30,2);
+insert into orders(id,isbn,price,cid) values(4,'isbn40',40,2);
+
+创建表students，包括id,name,gender,salary字段，使用check约束【性别只能是男或女，薪水介于6000到8000之间】
+create table students(
+  id number(3) primary key,
+  name varchar2(4) not null unique,
+  gender varchar2(2) not null check ( gender in ('男','女') ),
+  salary number(6) not null check ( salary between 6000 and 8000 )
+);
+insert into students(id,name,gender,salary) values(1,'哈哈','中',6000);错
+insert into students(id,name,gender,salary) values(2,'呵呵','男',5000);错
+insert into students(id,name,gender,salary) values(3,'嘻嘻','女',7000);对
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------java连接oracle的信息
+
+
+Java访问Oracle服务器--orcl数据库---emp表
+
+	private static String driver = 
+		"oracle.jdbc.driver.OracleDriver";//访问oracle服务器的驱动名称
+	
+	private static String url = 
+		"jdbc:oracle:thin:@127.0.0.1:1521:orcl";//访问oracle服务器的连接字串
+ 
+	private static String username = "scott";//访问orcl数据库的用户名
+	
+	private static String password = "tiger";//访问orcl数据库的密码
+
+	连接类型：在oracle中，用怎样的方式连接服务器，有二种方式连接oracle服务器，分别是thin和oci
+	1)thin：通过oracle公司提供的jar包
+	  连接简单，但速度相对慢
+          将该目录下的E:\oracleDB\product\11.2.0\dbhome_1\jdbc\lib\ojdbc5.jar包导入到
+          你项目的/WEB-INF/lib目录下
+
+        2)oci：安装oracle公司提供的客户端安装程序，类似于QQ客户端，得事先安装
+          连接复杂，但速度相对高 
+          且将该目录下的E:\oracleDB\product\11.2.0\dbhome_1\jdbc\lib\ojdbc5.jar包导入到
+          你项目的/WEB-INF/lib目录下，与客户端一起使用，速度较快
+
+        程序员使用thin方式即可     
+   
+
+
+		
+
+
+
+
+
+
