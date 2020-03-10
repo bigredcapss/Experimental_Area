@@ -1,16 +1,16 @@
 package bean;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @Description:员工实体
  * @Author:BigRedCaps
  */
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Employee2
 {
     private int empId;
@@ -21,6 +21,5 @@ public class Employee2
 
     // 【多对一】多个员工与一个部门
     private Dept dept;
-
 
 }

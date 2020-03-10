@@ -41,8 +41,8 @@ public class DeptEmployee2OneToManyTest
         emp_ls.setEmpName("李四");
 
         // 关系维护
-        dept.getEmpSet().add(emp_zs);
-        dept.getEmpSet().add(emp_ls);
+        dept.getEmps().add(emp_zs);
+        dept.getEmps().add(emp_ls);
 
         // 保存操作--注意先保存多的一方，再保存一的一方
         session.save(emp_zs);
@@ -117,7 +117,7 @@ public class DeptEmployee2OneToManyTest
         // 通过部门方，获取另外一方
 //        Dept dept = (Dept) session.get(Dept.class, 1);
 //        System.out.println(dept.getDeptName());
-//        System.out.println(dept.getEmpSet());// 懒加载
+//        System.out.println(dept.getEmps());// 懒加载
 
         // 通过员工方，获取另外一方
         Employee2 emp = (Employee2) session.get(Employee2.class, 1);

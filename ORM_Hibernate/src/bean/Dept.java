@@ -1,9 +1,8 @@
 package bean;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,9 +10,11 @@ import java.util.Set;
  * @Description:部门实体
  * @Author:BigRedCaps
  */
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Dept
 {
     private int deptId;
@@ -21,5 +22,5 @@ public class Dept
     private String deptName;
 
     // 【一对多】 一个部门对应多个员工
-    private Set<Employee2> empSet = new HashSet<>();
+    private Set<Employee2> emps = new HashSet<>();
 }

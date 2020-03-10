@@ -24,7 +24,7 @@
             inverse=false  set集合映射的默认值； 表示有控制权
             cascade="save-update,delete"
          -->
-        <set name="empSet">
+        <set name="emps" inverse="false" cascade="save-update,delete" lazy="extra">
             <key column="dept_id"></key>
             <one-to-many class="Employee2"/>
         </set>
