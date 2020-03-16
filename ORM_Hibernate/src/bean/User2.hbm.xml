@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="bean">
+
+    <class name="User2" table="t_user">
+        <id name="userId" column="id" type="int">
+            <generator class="native"></generator>
+        </id>
+        <property name="userName" column="userName"></property>
+    </class>
+
+</hibernate-mapping>

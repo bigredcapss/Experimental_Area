@@ -13,10 +13,9 @@
 ###### 2.Hibernate与Java的数据类型对应
 
 如图所示：
+![hibernate-java-datatype](https://github.com/BigRedCaps-Pro/Experimental_Area/tree/master/ORM_Hibernate/image/hibernate-java-datatype.png)
 
-![hibernate-java-datatype](ORM_Hibernate/image/hibernate-java-datatype.png)
-
-![hibernate-java-datatype2](ORM_Hibernate/image/hibernate-java-datatype2.png)
+![hibernate-java-datatype2](https://github.com/BigRedCaps-Pro/Experimental_Area/tree/master/ORM_Hibernate/image/hibernate-java-datatype2.png)
 
 - 流类型
 
@@ -135,7 +134,7 @@
 
 5. 如图所示：
 
-   ![hibernate执行流程](ORM_Hibernate/image/hibernate执行流程.png)
+   ![hibernate执行流程](https://github.com/BigRedCaps-Pro/Experimental_Area/tree/master/ORM_Hibernate/image/hibernate执行流程.png)
 
 ###### 4.集合映射
 
