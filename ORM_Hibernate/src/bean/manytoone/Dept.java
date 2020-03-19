@@ -1,8 +1,7 @@
-package bean;
+package bean.manytoone;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 

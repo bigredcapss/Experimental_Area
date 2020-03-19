@@ -13,7 +13,7 @@
 ###### 2.Hibernate与Java的数据类型对应
 
 如图所示：
-![hibernate-java-datatype](https://github.com/BigRedCaps-Pro/Experimental_Area/tree/master/ORM_Hibernate/image/hibernate-java-datatype.png)
+![hibernate-java-datatype](https://github.com/BigRedCaps-Pro/Experimental_Area/blob/master/ORM_Hibernate/image/hibernate-java-datatype.png)
 
 ![hibernate-java-datatype2](https://github.com/BigRedCaps-Pro/Experimental_Area/tree/master/ORM_Hibernate/image/hibernate-java-datatype2.png)
 

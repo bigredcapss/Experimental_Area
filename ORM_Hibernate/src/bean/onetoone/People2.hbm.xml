@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="bean">
+
+    <class name="bean.onetoone.People2" table="t_people2">
+        <id name="peopleId">
+            <generator class="native"></generator>
+        </id>
+        <property name="peopleName" length="20"></property>
+        <!--
+            一对一映射： 没有外键方
+         -->
+        <one-to-one name="idCard" class="bean.onetoone.IdCard2"></one-to-one>
+
+    </class>
+
+
+</hibernate-mapping>

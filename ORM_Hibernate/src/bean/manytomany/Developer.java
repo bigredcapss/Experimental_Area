@@ -1,4 +1,4 @@
-package bean;
+package bean.manytomany;
 
 import java.util.HashSet;
 import java.util.Set;

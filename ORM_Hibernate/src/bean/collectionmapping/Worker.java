@@ -1,4 +1,4 @@
-package bean;
+package bean.collectionmapping;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

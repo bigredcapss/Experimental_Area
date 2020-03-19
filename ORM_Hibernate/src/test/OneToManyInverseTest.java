@@ -1,9 +1,7 @@
 package test;
 
-import bean.Dept;
-import bean.Employee;
-import bean.Employee2;
-import org.hibernate.Hibernate;
+import bean.manytoone.Dept;
+import bean.manytoone.Employee2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

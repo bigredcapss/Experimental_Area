@@ -3,11 +3,11 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="bean" auto-import="true">
+<hibernate-mapping package="bean.compositekeymapping" auto-import="true">
 
     <class name="User">
         <!-- 复合主键映射 -->
-        <composite-id name="keys">
+        <composite-id name="keys" class="bean.compositekeymapping.CompositeKeysBean">
             <key-property name="userName" type="string"></key-property>
             <key-property name="address" type="string"></key-property>
         </composite-id>

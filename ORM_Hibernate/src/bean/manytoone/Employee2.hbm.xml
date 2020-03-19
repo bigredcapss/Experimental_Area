@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="bean">
 
-    <class name="Employee2" table="t_employee">
+    <class name="bean.manytoone.Employee2" table="t_employee">
         <id name="empId">
             <generator class="native"></generator>
         </id>
@@ -19,7 +19,7 @@
             2.  映射的部门属性，对应的外键字段: dept_id
             3.  部门的类型
          -->
-        <many-to-one name="dept" column="dept_id" class="Dept"></many-to-one>
+        <many-to-one name="dept" column="dept_id" class="bean.manytoone.Dept"></many-to-one>
 
     </class>
 

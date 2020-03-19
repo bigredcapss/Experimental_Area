@@ -1,5 +1,6 @@
-package bean;
+package bean.compositekeymapping;
 
+import bean.compositekeymapping.CompositeKeysBean;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

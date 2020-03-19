@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="bean">
 	
-	<class name="Employee" table="employee">
+	<class name="bean.manytoone.Employee" table="employee">
 		<!-- 主键 ，映射-->
 		<id name="empId" column="id">
 			<generator class="native"/>

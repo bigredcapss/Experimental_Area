@@ -1,6 +1,6 @@
 package test;
 
-import bean.Employee;
+import bean.manytoone.Employee;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;

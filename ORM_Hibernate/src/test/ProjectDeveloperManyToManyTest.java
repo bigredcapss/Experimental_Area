@@ -1,7 +1,7 @@
 package test;
 
-import bean.Developer;
-import bean.Project;
+import bean.manytomany.Developer;
+import bean.manytomany.Project;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

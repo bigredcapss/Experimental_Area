@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="bean">
 
-    <class name="Worker" table="t_worker">
+    <class name="bean.collectionmapping.Worker" table="t_worker">
         <id name="workerId" column="id">
             <generator class="native"></generator>
         </id>

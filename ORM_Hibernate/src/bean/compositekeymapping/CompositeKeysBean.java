@@ -1,4 +1,4 @@
-package bean;
+package bean.compositekeymapping;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

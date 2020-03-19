@@ -1,6 +1,6 @@
 package dao.impl;
 
-import bean.Employee;
+import bean.manytoone.Employee;
 import dao.IEmployeeDao;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;

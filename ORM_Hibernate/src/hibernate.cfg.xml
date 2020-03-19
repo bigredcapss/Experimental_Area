@@ -23,11 +23,11 @@
 		<!-- 2.2 格式化sql -->
 		<!--<property name="hibernate.format_sql">true</property>-->
 		<!-- 2.3 自动建表 -->
-		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.hbm2ddl.auto">create</property>
 
 		
 		<!-- 3. 加载所有映射 -->
-		<mapping resource="bean/Employee.hbm.xml"/>
+		<mapping resource="bean/manytoone/Employee.hbm.xml"/>
 		<!--<mapping resource="bean/User.hbm.xml"/>-->
 
 	</session-factory>

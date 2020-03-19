@@ -1,6 +1,5 @@
 package test;
 
-import bean.User;
 import bean.User2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

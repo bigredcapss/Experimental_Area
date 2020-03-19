@@ -1,6 +1,6 @@
 package dao;
 
-import bean.Employee;
+import bean.manytoone.Employee;
 
 import java.io.Serializable;
 import java.util.List;

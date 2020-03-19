@@ -1,7 +1,7 @@
 package test;
 
-import bean.CompositeKeysBean;
-import bean.User;
+import bean.compositekeymapping.CompositeKeysBean;
+import bean.compositekeymapping.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

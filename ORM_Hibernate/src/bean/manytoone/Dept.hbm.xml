@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="bean">
 
-    <class name="Dept" table="t_dept">
+    <class name="bean.manytoone.Dept" table="t_dept">
         <id name="deptId">
             <generator class="native"></generator>
         </id>
@@ -26,7 +26,7 @@
          -->
         <set name="emps" inverse="false" cascade="save-update,delete" lazy="extra">
             <key column="dept_id"></key>
-            <one-to-many class="Employee2"/>
+            <one-to-many class="bean.manytoone.Employee2"/>
         </set>
 
 

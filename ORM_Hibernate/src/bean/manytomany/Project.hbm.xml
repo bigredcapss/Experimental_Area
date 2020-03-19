@@ -5,7 +5,7 @@
 
 <hibernate-mapping package="bean">
 
-    <class name="Project" table="t_project">
+    <class name="bean.manytomany.Project" table="t_project">
         <id name="prj_id">
             <generator class="native"></generator>
         </id>
@@ -20,7 +20,7 @@
          -->
         <set name="developers" table="t_relation" cascade="save-update" inverse="false">
             <key column="prjId"></key>
-            <many-to-many column="did" class="Developer"></many-to-many>
+            <many-to-many column="did" class="bean.manytomany.Developer"></many-to-many>
         </set>
 
     </class>

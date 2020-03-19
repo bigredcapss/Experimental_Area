@@ -1,6 +1,6 @@
 package test;
 
-import bean.Employee;
+import bean.manytoone.Employee;
 import dao.impl.EmployeeDaoImpl;
 import org.junit.Test;
 
