@@ -3,16 +3,16 @@
 	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="bean">
+<hibernate-mapping package="bean.manytoone">
 	
-	<class name="bean.manytoone.Employee" table="employee">
+	<class name="bean.manytoone.Employee">
 		<!-- 主键 ，映射-->
-		<id name="empId" column="id">
+		<id name="empId">
 			<generator class="native"/>
 		</id>
 		<!-- 非主键，映射 -->
-		<property name="empName" column="empName"></property>
-		<property name="workDate" column="workDate"></property>
+		<property name="empName"></property>
+		<property name="workDate"></property>
 		
 	</class>
 

@@ -23,11 +23,38 @@
 		<!-- 2.2 格式化sql -->
 		<!--<property name="hibernate.format_sql">true</property>-->
 		<!-- 2.3 自动建表 -->
-		<property name="hibernate.hbm2ddl.auto">create</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 
-		
+		<!-- 配置session的创建方式：线程方式创建session对象 -->
+		<property name="hibernate.current_session_context_class">thread</property>
+
+		<!--****************** 【连接池配置，可通过查看Hibernate的配置文件配置】****************** -->
+		<!-- 配置连接驱动管理类 -->
+		<property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+		<!-- 配置连接池参数信息 -->
+		<property name="hibernate.c3p0.min_size">2</property>
+		<property name="hibernate.c3p0.max_size">4</property>
+		<property name="hibernate.c3p0.timeout">5000</property>
+		<property name="hibernate.c3p0.max_statements">10</property>
+		<property name="hibernate.c3p0.idle_test_period">30000</property>
+		<property name="hibernate.c3p0.acquire_increment">2</property>
+
+		<!--****************** 【二级缓存配置,可通过查看Hibernate的配置文件配置】****************** -->
+		<!-- a.  开启二级缓存 -->
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<!-- b. 指定使用哪一个缓存框架(默认提供的) -->
+		<property name="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</property>
+		<!-- 开启查询缓存 -->
+		<!--<property name="hibernate.cache.use_query_cache">true</property>-->
+		<!-- c. 指定哪一些类，需要加入二级缓存 -->
+		<class-cache usage="read-write" class="bean.manytoone.Dept"/>
+		<class-cache usage="read-only" class="bean.manytoone.Employee2"/>
+		<!-- 集合缓存[集合缓存的元素对象，也加加入二级缓存] -->
+		<collection-cache usage="read-write" collection="bean.manytoone.Dept.emps"/>
+
+
 		<!-- 3. 加载所有映射 -->
-		<mapping resource="bean/manytoone/Employee.hbm.xml"/>
+		<!--<mapping resource="bean/manytoone/Employee.hbm.xml"/>-->
 		<!--<mapping resource="bean/User.hbm.xml"/>-->
 
 	</session-factory>

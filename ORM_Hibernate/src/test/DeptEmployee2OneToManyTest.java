@@ -32,13 +32,13 @@ public class DeptEmployee2OneToManyTest
 
         // 部门对象
         Dept dept = new Dept();
-        dept.setDeptName("应用开发部");
+        dept.setDeptName("市场部");
 
         // 员工对象
         Employee2 emp_zs = new Employee2();
-        emp_zs.setEmpName("张三");
+        emp_zs.setEmpName("王五");
         Employee2 emp_ls = new Employee2();
-        emp_ls.setEmpName("李四");
+        emp_ls.setEmpName("赵六");
 
         // 关系维护
         dept.getEmps().add(emp_zs);
@@ -74,13 +74,13 @@ public class DeptEmployee2OneToManyTest
 
         // 部门对象
         Dept dept = new Dept();
-        dept.setDeptName("综合部");
+        dept.setDeptName("运维部");
 
         // 员工对象
         Employee2 emp_zs = new Employee2();
-        emp_zs.setEmpName("张三");
+        emp_zs.setEmpName("Larry");
         Employee2 emp_ls = new Employee2();
-        emp_ls.setEmpName("李四");
+        emp_ls.setEmpName("Marry");
 
         // 关系维护
         emp_zs.setDept(dept);
