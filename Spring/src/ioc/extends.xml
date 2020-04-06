@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- 继承装入方式：abstract="true"表示该bean标签是一个模板 -->
+  <bean id="stu_pa" class="bean.Student" abstract="true">
+  	<property name="name" value="jane"></property>
+  	<property name="age" value="23"></property>
+  	<property name="email" value="123@qq.com"></property>
+  </bean>
+  <!--parent="stu_pa"引入父模板  -->
+  <bean name="stu1" class="bean.Student" parent="stu_pa">
+  	<property name="id" value="1"></property>
+  </bean>
+  
+  <bean name="stu2" class="bean.Student" parent="stu_pa">
+  	<property name="id" value="2"></property>
+  </bean>
+  
+  <bean name="stu3" class="bean.Student" parent="stu_pa">
+  	<property name="id" value="3"></property>
+  </bean>
+  
+</beans>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="single.Student">
+
+    <resultMap type="single.Student" id="studentMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sal" column="sal"/>
+    </resultMap>
+
+
+    <!-- 增加学生 -->
+    <insert id="add" parameterType="single.Student">
+		insert into students(id,name,sal) values(#{id},#{name},#{sal})
+	</insert>
+
+
+
+    <!-- 根据ID查询学生
+         如果参数不是一个实体的话，只是一个普通变量，例如:int,double,String
+         这里的#{中间的变量名可以随便写}，不过提倡就用方法的形参
+     -->
+    <select id="findById" parameterType="int" resultType="single.Student">
+		select id,name,sal from students where id = #{id}
+	</select>
+
+    <!-- 查询所有学生 
+         理论上resultType要写List<Student>
+         但这里只需书写List中的类型即可，即只需书写Student的全路径名
+    -->
+    <select id="findAll" resultType="single.Student">
+		select id,name,sal from students
+	</select>
+
+
+
+    <!-- 更新学生 -->
+    <update id="update" parameterType="single.Student">
+		update students set name=#{name},sal=#{sal} where id=#{id}
+	</update>
+
+
+
+    <!-- 删除学生 -->
+    <delete id="delete" parameterType="single.Student">
+		delete from students where id = #{id}
+	</delete>
+
+
+    <!-- 
+    <insert id="delete" parameterType="single.Student">
+        delete from students where id = #{id}
+    </insert>
+    -->
+
+    <!-- 
+        注意1：这个insert/update/delete标签只是一个模板，在做操作时，其实是以SQL语句为核心的
+             即在做增/删/时，insert/update/delete标签可通用，
+             但做查询时只能用select标签
+             我们提倡什么操作就用什么标签
+        注意2：select等标签内的resultMap/resultType属性，当数据表的字段和实体的属性一致时，
+         用resultType,不一致时，用resultMap
+    -->
+
+    <!-- 分页查询 -->
+    <select id="findAllWithFy" parameterType="map" resultMap="studentMap">
+		select id,name,sal
+		from students
+		limit #{pstart},#{psize}
+	</select>
+
+
+    <select id="findAllByNameWithFy" parameterType="map" resultMap="studentMap">
+		select id,name,sal
+		from students
+		where name like #{pname}
+		limit #{pstart},#{psize}
+	</select>
+
+    <!-- 动态sql查询 -->
+    <select id="findAllByDynamicSql" parameterType="map" resultMap="studentMap">
+        select * from students
+        <where>
+            <if test="pid!=null">
+                and id = #{pid}
+            </if>
+            <if test="pname!=null">
+                and name = #{pname}
+            </if>
+            <if test="psal!=null">
+                and sal = #{psal}
+            </if>
+        </where>
+    </select>
+
+    <!-- set标签自动判断哪个是最后一个字段，会自动去掉最后一个,号 -->
+    <update id="dynaUpdate" parameterType="map">
+        update students
+        <set>
+            <if test="pname!=null">
+                name = #{pname},
+            </if>
+            <if test="psal!=null">
+                sal = #{psal},
+            </if>
+        </set>
+        where id = #{pid}
+    </update>
+
+    <delete id="dynaDeleteArray">
+        delete from students where id in
+        <!-- foreach用于迭代数组元素
+             open表示开始符号
+             close表示结束符合
+             separator表示元素间的分隔符
+             item表示迭代的数组，属性值可以任意，但提倡与方法的数组名相同
+             #{ids}表示数组中的每个元素值
+         -->
+        <foreach collection="array" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </delete>
+
+
+    <delete id="dynaDeleteList">
+        delete from students where id in
+        <foreach collection="list" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </delete>
+
+
+    <!-- sql片段对应字段名,id属性值任意 -->
+    <sql id="key">
+        <!-- 去掉最后一个,号 -->
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="name!=null">
+                name,
+            </if>
+            <if test="sal!=null">
+                sal,
+            </if>
+        </trim>
+    </sql>
+
+
+    <!-- sql片段对应?,id属性值任意 -->
+    <sql id="value">
+        <!-- 去掉最后一个,号 -->
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="name!=null">
+                #{name},
+            </if>
+            <if test="sal!=null">
+                #{sal},
+            </if>
+        </trim>
+    </sql>
+
+    <!-- <include refid="key"/>和<include refid="value"/>表示引用上面定义的sql片段 -->
+    <insert id="dynaInsert" parameterType="single.Student">
+        insert into students(<include refid="key"/>) values(<include refid="value"/>)
+    </insert>
+
+</mapper>
+
+
+
+

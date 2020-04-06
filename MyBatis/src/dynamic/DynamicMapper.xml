@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dynamic.DynamicMapper">
+<select id="findStudent_if" resultType="student">
+	select stud_id studId,name,email,dob,phone from student
+	where 1=1
+	<if test="param1!=0">
+		and stud_id=#{param1}
+	</if>
+	<if test="param2!=null">
+		and name=#{param2}
+	</if>
+	<if test="param3!=null">
+		and email=#{param3}
+	</if>
+</select>
+
+<select id="findStudent_ifs" parameterType="map" resultType="student">	
+	select stud_id studId,name,email,dob,phone from student
+	where 1=1
+	<!-- 这里基于map集合的特点取值,因此可以这样 -->
+	<!-- test里面的id,name都是map集合当中的key -->
+	<if test="id!=null">
+		and stud_id=#{id}
+	</if>
+	<if test="name!=null">
+		and name=#{name}
+	</if>
+	<if test="email!=null">
+		and email=#{email}
+	</if>
+</select>
+
+<select id="findStudent_where" parameterType="map" resultType="student">	
+	select stud_id studId,name,email,dob,phone from student
+	<!-- where中条件成立，自动拼接where语句，在where语句的条件前面有and或or,自动移除前面的条件 -->
+	<where>
+	<if test="id!=null">
+		stud_id=#{id}
+	</if>
+	<if test="name!=null">
+		and name=#{name}
+	</if>
+	<if test="email!=null">
+		and email=#{email}
+	</if>
+	</where>
+</select>
+
+<select id="findStudent_choose" parameterType="map" resultType="student">	
+	select stud_id studId,name,email,dob,phone from student
+	<!-- choose标签类似于if(){}else if(){}else{}这种结构-->
+	<choose>
+		<when test="id!=null">
+			where stud_id#{id}
+		</when>
+		<when test="name!=null">
+			where name=#{name}
+		</when>
+		<otherwise>
+			where 1=1
+		</otherwise>
+	</choose>
+</select>
+<!-- 动态sql语句的更新操作 -->
+<update id="studentUpdate" parameterType="map">
+	update student
+	<!-- 自动拼接set
+	set标签后跟的条件后有多余的逗号，自动移除
+	 -->
+	<set>
+		<if test="name!=null">
+			name=#{name}
+		</if>
+		<if test="email!=null">
+			email=#{email}
+		</if>
+	</set>
+	<where>
+		<if test="id!=null">
+			stud_id=#{id}
+		</if>
+	</where>
+</update>
+
+</mapper>

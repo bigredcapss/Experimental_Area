@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <!-- 配置映射器：指明url和处理类对象的对应规则
+  <bean name="hello.do" class="com.zzuli.web.controller.FirstController"></bean>
+  -->
+  <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+  <!-- 配置适配器:默认，控制器实现了接口controller,里面有重写方法的时候配置SimpleControllerHandlerAdapter-->
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+  <!-- 配置视图解析器 ：viewClass表示视图处理使用jstl标签库；prefix表示对逻辑视图拼接的前缀；suffix表示逻辑视图拼接的后缀-->
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>  
+		<property name="prefix" value="/WEB-INF/jsp/"/>  
+		<property name="suffix" value=".jsp"/>  
+  </bean>
+  <!-- 处理器 -->
+  <bean name="/hello.do" class="com.zzuli.web.controller.FirstController"></bean>
+  </beans>

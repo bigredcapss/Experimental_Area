@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <bean name="str" class="java.lang.String">
+  	<constructor-arg index="0" value="array4"></constructor-arg>
+  </bean>
+  <bean name="coll" class="bean.CollTest">
+  	<property name="array">
+  		<!-- 数组的装配 -->
+  		<!-- 方式二 -->
+  		<list>
+  			<value>array1</value>
+  			<value>array2</value>
+  			<ref bean="str"/>
+  		</list>
+  		
+  		<!--  方式一
+  		<array>
+  			<value>array1</value>
+  			<value>array2</value>
+  			<value>array3</value>
+  			<ref bean="str"/>
+  			<bean class="java.lang.String">
+  				<constructor-arg index="0" value="array5"></constructor-arg>
+  			</bean>
+  		</array>
+  		-->
+  	</property>
+  	<property name="list">
+  		<!-- list集合的装配 (spring默认构建的集合是ArrrayList，
+  		在scheme的约束下不能指定具体的构建什么样的集合，util的scheme约束类型可以指定构建的集合类型,ArrayList底层是基于数组实现的);
+  		value-type指定的是集合元素的类型，也可以不指定，默认是以name="list" ，setList所对应的类型，指定的话，则按指定的为主
+  		-->
+  		<!-- 方式一 
+  		<array value-type="java.lang.String">
+  			<value>list1</value>
+  			<value>list2</value>
+  			<value>list3</value>
+  		</array>
+  		-->
+  		<!-- 方式二 -->
+  		<list>
+  			<value>lsit1</value>
+  			<value>list2</value>
+  		</list>
+  	</property>
+  	<property name="set">
+  		<!-- set集合的装配 
+  		spring默认情况下构建的LinkedHashSet
+  		value-type同上
+  		-->
+  		<set value-type="java.lang.String">
+  			<value>set1</value>
+  			<value>set2</value>
+  			<value>set3</value>
+  		</set>
+  	</property>
+  	<property name="map">
+  		<!-- map集合的装配 :spring默认情况下构建的LinkedHashMap
+  		map下的entry标签表示一组键值对内容；entry属性，key表示健（基本数据类型或String）;key-ref表示健是对象，key-ref指向做健的对象的名字（存在spring中），指向其它bean标签的name或id属性；
+  		value属性：指向基本数据类型的值（String),value-ref属性：把spring中某个对象的名字作为值
+  		-->
+  		<map key-type="java.lang.String" value-type="java.lang.String">
+  			<entry key="key1" value="1"></entry>
+  			<entry key="key2" value="2"></entry>
+  			<entry key="key3" value="str"></entry>
+  		</map>
+  	</property>
+  	<property name="pro">
+  	<!-- properties集合的装配 :map集合的装配 :spring默认情况下构建的Properties
+  	这里无论是否指定value-type="java.lang.String"，里面都是String类型的
+  	-->
+  		<props value-type="java.lang.String">
+  			<prop key="pro1">pro</prop>
+  			<prop key="pro2">pro2</prop>
+  		</props>
+  	</property>
+  </bean>
+</beans>

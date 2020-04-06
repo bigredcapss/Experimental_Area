@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/mvc
+  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+  ">
+  <!-- 配置映射器：指明url和处理类对象的对应规则
+  <bean name="hello.do" class="com.zzuli.web.controller.FirstController"></bean>
+  -->
+  <!-- 一旦自定义了拦截器，映射器就不能省略了 -->
+   
+ <!-- <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">  -->
+  <!-- 配置拦截器，在映射器中配置拦截器，对所有的controller生效;配置多个拦截器的时候，先配置的拦截器先生效，执行完controller中的方法后，先执行的拦截器后执行 -->	  	
+<!--    <property name="interceptors">
+  		<array>
+  			<bean class="com.zzuli.web.intercepter.DeineInterceptor"></bean>
+  			<bean class="com.zzuli.web.intercepter.DefineInterceptor2"></bean>
+  		</array>
+  	</property> 
+  </bean> -->
+  <!-- 给指定的请求设置拦截器 -->
+  <mvc:interceptors>
+  	<mvc:interceptor>
+  	    <!-- 对资源请求的限定"/hello.do" :/*斜杠后面直接跟资源名称，/**资源名称中允许出现多个斜杠-->
+  		<mvc:mapping path="/second"/>
+  		<!-- 对该资源请求不加入拦截器 -->
+  		<!-- <mvc:exclude-mapping path="/hello.do"/> -->
+  		<!-- 指的是拦截器 -->
+  		<bean class="com.zzuli.web.intercepter.DefineInterceptor2"></bean>
+  	</mvc:interceptor>
+  	<mvc:interceptor>
+  		<mvc:mapping path="/hello.do"/>
+  		<bean class="com.zzuli.web.intercepter.TimeInterceptor"></bean>
+  	</mvc:interceptor>
+  	<mvc:interceptor>
+  		<mvc:mapping path="/**"/>
+  		<bean class="com.zzuli.web.intercepter.LoginInterceptor"></bean>
+  	</mvc:interceptor>
+  </mvc:interceptors>
+  <!-- 告诉spring，使用自定义的适配器 -->
+  <bean class="com.zzuli.web.adapter.DefineAdapter"></bean>
+  <!-- 配置适配器:默认，控制器实现了接口controller,里面有重写方法的时候配置SimpleControllerHandlerAdapter-->
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+  <!-- 配置视图解析器 ：viewClass表示视图处理使用jstl标签库；prefix表示对逻辑视图拼接的前缀；suffix表示逻辑视图拼接的后缀-->
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>  
+		<property name="prefix" value="/WEB-INF/jsp/"/>  
+		<property name="suffix" value=".jsp"/>  
+  </bean>
+  <!-- 解决静态资源被拦截的方法：方式二：mvc:resources处理被忽略的静态资源：mapping:指向被拦截的资源的名字；location：指向资源存储的位置-->
+<!--   
+  <mvc:resources mapping="/images/**" location="/images/"/>  
+  <mvc:resources mapping="/js/**" location="/js/"/>  
+  <mvc:resources mapping="/css/**" location="/css/"/> 
+   -->
+  <!-- 解决静态资源被拦截的方法：方式三：默认忽略静态资源 -->
+  <mvc:default-servlet-handler/>
+  <!-- 处理器 -->
+  <bean name="/hello.do" class="com.zzuli.web.controller.FirstController"></bean>
+  <bean name="/second" class="com.zzuli.web.controller.SecondController"></bean>
+  <bean name="/third" class="com.zzuli.web.controller.ThirdController">
+    <!-- 对本次回话，加锁 -->
+  	<property name="synchronizeOnSession" value="true"></property>
+  	<!-- 本次请求支持提交的方式 -->
+  	<property name="supportedMethods" value="POST,GET"></property>
+  	<!-- 本次请求，服务器必须给当前浏览器构建过session会话，没有session直接报错 -->
+  	<property name="requireSession" value="true"></property>
+  </bean>
+  <bean name="/four" class="com.zzuli.web.adapter.FourController"></bean>
+  <bean name="/five" class="com.zzuli.web.intercepter.FiveController"></bean>
+  <bean name="/login" class="com.zzuli.web.controller.LoginController"></bean>
+  </beans>

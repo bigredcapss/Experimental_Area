@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  ">
+  <!-- 让spring构建cglib代理对象 -->
+  <bean name="target" class="pojo.ProductService"></bean>
+  <bean name="proxy" class="aop.proxy.cglibproxy.CglibProxy2">
+ 	<property name="target" ref="target"></property>
+  </bean>
+  <!-- 调用实例工厂方法返回代理对象 -->
+  <bean name="factory" factory-bean="proxy" factory-method="getProxy"></bean>
+  </beans>

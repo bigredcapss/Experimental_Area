@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- 使用spring工厂创建bean实例 -->
+  <!-- spring会自动判断classs是否是FactoryBean的实现类，如果是，直接调用getObject方法返回对象 -->
+  <bean name="str" class="bean.SpringFactory"></bean>
+
+<!--   <bean name="conn" class="bean.ConnectionFactory">
+  	<property name="driver" value="com.mysql.jdbc.Driver"></property>
+  	<property name="url" value="jdbc:mysql://localhost:3306/test"></property>
+  	<property name="user" value="root"></property>
+    <property name="password" value="root"></property>
+  </bean> -->
+    <!-- 读取properties配置文件装入内存，在使用的地方取${key} -->
+  <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+  	<property name="location" value="ioc/db.properties"></property>
+  </bean>
+  <bean name="conn" class="bean.ConnectionFactory">
+	<property name="driver" value="${driver}"></property>
+	<property name="url" value="${url}"></property>
+	<property name="user" value="${user}"></property>
+	<property name="password" value="${password}"></property>
+  </bean>
+  
+  
+  </beans>

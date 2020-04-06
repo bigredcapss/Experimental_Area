@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          ">
+          
+    <!-- 读取配置文件，后面取值${key}
+    properties文件不能出现user的key -->
+    <context:property-placeholder location="classpath:db/db.properties"/>
+	<!-- <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="loaction" value="db/db.properties"></property>
+	</bean> -->
+<!-- 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="loaction" value="db/db.properties"></property>
+	</bean> -->
+	<!-- jdk提供的数据源方式 -->
+<!-- 		<bean name="dataSource1"
+		class="oracle.jdbc.pool.OracleConnectionPoolDataSource">
+		<property name="networkProtocol">
+			<value>tcp</value>
+		</property>
+		<property name="databaseName">
+			<value>XE</value> 
+		</property>
+		<property name="driverType">
+			<value>thin</value>
+		</property>
+		<property name="portNumber">
+			<value>1521</value>
+		</property>
+		<property name="user">
+			<value>jd1812</value>
+		</property>
+		<property name="serverName">
+			<value>192.168.43.216</value>
+		</property>
+		<property name="password">
+			<value>briup</value>
+		</property>
+	</bean> -->
+	 
+	 <!-- DBCP提供的数据源方式-->
+	 <!-- <bean id="dataSource2"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>${driver}</value>
+		</property>
+		<property name="url">
+			<value>${url}</value>
+		</property>
+		<property name="username">
+			<value>${username}</value>
+		</property>
+		<property name="password">
+			<value>${passwd}</value>
+		</property>
+		<property name="maxActive">
+			<value>80</value>
+		</property>
+		<property name="maxIdle">
+			<value>20</value>
+		</property>
+		<property name="maxWait">
+			<value>3000</value>
+		</property>
+	</bean>  -->
+	 <!-- spring提供的一种数据源 -->
+     <!-- <bean id="dataSource3"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>${driver}</value>
+		</property>
+		<property name="url">
+			<value>${url}</value>
+		</property>
+		<property name="username">
+			<value>${username}</value>
+		</property>
+		<property name="password">
+			<value>${passwd}</value>
+		</property>
+      </bean> -->
+      <!-- c3p0数据源 -->
+	<bean id="dataSource4" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass">
+			<value>${driver}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${url}</value>
+		</property>
+		<property name="user">
+			<value>${user}</value>
+		</property>
+		<property name="password">
+			<value>${password}</value>
+		</property>
+
+		<property name="minPoolSize">
+			<value>5</value>
+		</property>
+
+		<property name="maxPoolSize">
+			<value>30</value>
+		</property>
+
+		<property name="initialPoolSize">
+			<value>10</value>
+		</property>
+
+		<property name="maxIdleTime">
+			<value>60</value>
+		</property>
+
+		<property name="acquireIncrement">
+			<value>5</value>
+		</property>
+
+		<property name="idleConnectionTestPeriod">
+			<value>60</value>
+		</property>
+		<property name="acquireRetryAttempts">
+			<value>30</value>
+		</property>
+	</bean> 
+	
+	
+	<bean name="dao" class="db.jdbc.HusDaoImpl">
+		<property name="datasource" ref="dataSource4"></property>
+	</bean>
+</beans>
+
+
+
+

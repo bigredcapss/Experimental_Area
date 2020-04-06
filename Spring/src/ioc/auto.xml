@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- autowire自动匹配，自动装载
+  byType：基于类型匹配并装载；基于set方法的参数类型匹配，使用byType的时候必须保证该类型只出现一次
+  byName:基于名字匹配并装载；基于set后首字母小写的名字和bean标签中的名字匹配
+  autowire="default"采用默认的，和一级标签beans中的属性default-autowire结合使用，default-autowire设置的是全局的匹配方式；
+   如果bean标签配置类匹配对象的方式，一级标签配置的default-autowire失效;
+  autowire="no"：不采用自动匹配
+  autowire="constructor"：基于构造器中的参数进行匹配，默认基于类型匹配，如果类型找到多个，在基于名字匹配
+  
+ 
+   -->
+  <bean name="us" class="bean.UserService" autowire="constructor"></bean>
+  <bean name="ud" class="bean.UserDao"></bean>
+  </beans>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  ">
+  <!-- 在原环绕通知的基础上加上异常通知 -->
+  <bean name="target" class="pojo.BookServiceImpl"></bean>
+  <bean name="around" class="aop.spring.around.AroundAdviceTest"></bean>
+  <!-- 异常通知的配置 -->
+  <bean name="throwes" class="aop.spring.throwex.ThrowAdviceTest"></bean>
+  <bean name="proxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+  <!-- 配置目标对象 -->
+  <property name="target" ref="target"></property>
+  <property name="interfaces">
+  	<array>
+  		<value>pojo.BookService</value>
+  	</array>
+  </property>
+  <property name="interceptorNames">
+  	<array>
+  		<value>around</value>
+  		<value>throwes</value>
+  	</array>
+  </property>
+  </bean>
+  
+</beans>

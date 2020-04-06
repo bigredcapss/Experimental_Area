@@ -1,0 +1,612 @@
+﻿目标：
+
+1）掌握增、删、改数据和事务操作
+
+2）掌握【视图】和同义词
+
+3）掌握【序列】和索引
+
+4）了解有关用户和权限的控制
+
+
+-------------------------------------------------------------------------------------准备篇
+
+
+col empno for 9999;
+col ename for a10;
+col job for a10;
+col mgr for 9999;
+col hiredate for a12;
+col sal for 9999;
+col comm for 9999;
+col deptno for 99;
+col tname for a40;
+set pagesize 80;
+
+--创建新表xxx_emp，复制emp表中的结构，同时复制emp表的所有数据
+create table xxx_emp
+as 
+select * from emp;
+
+
+-------------------------------------------------------------------------------------增删改数据
+
+
+回顾SQL92/99标准的四大类
+（1）DML（数据操纵语言）：select，insert，update，delete
+（2）DDL（数据定义语言）：create table，alter table，drop table，truncate table
+（3）DCL（数据控制语言）：grant select any table to scott/revoke select any table from scott
+（4）TCL（事务控制语言）：commit，rollback，savepoint to 回滚点
+
+向emp表中插入一条记录（方式一：按表默认结构顺序）insert into 表名 values ...语法
+insert into emp values(1111,'JACK','IT',7788,sysdate,1000,100,40);
+
+向emp表中插入一条记录（方式二：按自定义顺序）insert into 表名(列名) values ...语法
+insert into emp(ENAME,EMPNO,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) 
+values('MARRY',2222,'IT',7788,sysdate,1000,100,40);
+
+向emp表中插入NULL值（方式一：采用显示插入NULL值）
+insert into emp values(3333,'SISI','IT',7788,sysdate,1000,NULL,40);
+
+向emp表中插入NULL值 (方式二：采用隐式插入NULL值），前提是所插入的字段允许插入NULL值
+insert into emp(ENAME,EMPNO,JOB,MGR,HIREDATE,SAL,DEPTNO) 
+values('SOSO',4444,'IT',7788,sysdate,1000,40);
+
+使用&占位符，动态输入值，&可以运用在任何一个DML语句中，在values子句中使用，例如：'&ename'和&sal
+insert into emp values(&empno,'&ename','&job',&mgr,&hiredate,&sal,&comm,&xxxxxxxx);
+注意：&是sqlplus工具提供的占位符，如果是字符串或日期型要加''符，数值型无需加''符
+
+使用&占位符，动态输入值，&可以运用在任何一个DML语句中，在from子句中使用
+select * from &table;
+
+使用&占位符，动态输入值，&可以运用在任何一个DML语句中，在select子句中使用
+select empno,ename,&colname from emp;
+
+使用&占位符，动态输入值，&可以运用在任何一个DML语句中，在where子句中使用
+select * from emp where sal > &money;
+
+使用&占位符，动态输入值，&可以运用在任何一个DML语句中，在group by 和 having子句中使用
+select deptno,avg(sal)
+from emp
+group by &deptno
+having avg(sal) > &money;
+
+删除emp表中的所有记录
+delete from emp;
+
+将xxx_emp表中所有20号部门的员工，复制到emp表中，批量插入，insert into 表名 select ...语法
+insert into emp
+select * 
+from xxx_emp
+where deptno=20;
+
+将'SMITH'的工资增加20%
+update emp set sal=sal*1.2 where ename = upper('smith');
+
+将'SMITH'的工资设置为20号部门的平均工资，这是一个条件未知的事物，优先考虑子查询
+第一：20号部门的平均工资
+      select avg(sal) from emp where deptno=20;
+第二：将'SMITH'的工资设置为2207
+      update emp set sal=2207 where ename = 'SMITH'; 
+子查询：
+     update emp 
+     set sal = (
+	select avg(sal) 
+        from emp 
+        where deptno=20	
+     ) 
+     where ename = 'SMITH';   
+
+删除工资比所有部门平均工资都低的员工，这是一个条件未知的事物，优先考虑子查询
+第一：查询所有部门的平均工资
+      select avg(sal) from emp group by deptno;
+第二：删除工资比(*,*,*)都低的员工
+      delete from emp where sal<all(*,*,*);
+子查询：
+      delete 
+      from emp 
+      where sal < all(
+	 select avg(sal) 
+         from emp 
+         group by deptno
+      ); 
+
+删除无佣金的员工
+delete from emp where comm is null;
+
+将emp表丢入回收站，drop table 表名
+drop table emp;
+
+从回收站将emp表闪回，flashback table 表名 to before drop
+flashback table emp to before drop;
+
+查询回收站，show recyclebin
+show recyclebin;
+
+清空回收站，purge recyclebin
+purge recyclebin;
+
+使用关键字purge，彻底删除emp表，即不会将emp表丢入回收站，永久删除emp表，drop table 表名 purge
+drop table emp purge;
+
+依据xxx_emp表结构，创建emp表的结构，但不会插入数据
+create table emp
+as
+select * from xxx_emp where 1<>1;
+
+创建emp表，复制xxx_emp表中的结构，同时复制xxx_emp表的所有数据
+create table emp
+as
+select * from xxx_emp where 1=1;
+注意：where不写的话，默认为true
+
+将emp截断，再自动创建emp表，truncate table 表名
+truncate table emp;
+
+向emp表，批量插入来自xxx_emp表中部门号为20的员工信息，只包括empno，ename，job，sal字段
+insert into emp(empno,ename,job,sal)
+select empno,ename,job,sal 
+from xxx_emp 
+where deptno=20;
+
+使用关键字purge，彻底删除emp表，即不会将emp表丢入回收站
+drop table emp purge;
+
+依据xxx_emp表，只创建emp表，但不复制数据，且emp表只包括empno,ename字段
+create table emp(empno,ename)
+as
+select empno,ename from xxx_emp where 1=2;
+
+向emp表（只含有empno和ename字段），批量插入xxx_emp表中部门号为20的员工信息
+insert into emp(empno,ename)
+select empno,ename from xxx_emp where deptno=20;
+
+drop table 和 truncate table 和 delete from 区别：
+drop table
+1)属于DDL
+2)不可回滚
+3)不可带where
+4)表内容和结构删除
+5)删除速度快
+
+truncate table
+1)属于DDL
+2)不可回滚
+3)不可带where
+4)表内容删除
+5)删除速度快
+
+delete from
+1)属于DML
+2)可回滚
+3)可带where
+4)表结构在，表内容要看where执行的情况
+5)删除速度慢,需要逐行删除
+软件工程师
+
+
+-------------------------------------------------------------------------------------事务
+
+回顾什么是事务?
+一个不可分割的子操作形成一个整体，该整体要么全部执行成功，要么全部执行失败。例如：转帐
+
+回顾为什么要用事务？
+如果不用事务的话，为转帐为例，可能出现一个用户钱增加了，另一个用户钱不变
+
+回顾编程中，事务可用于哪一层？
+事务放在业务层
+
+回顾jdbc编程中，如何使用事务？
+connection.setAutoCommit(false);
+pstmt.executeUpdate();
+connection.commit();
+connection.rollback();
+
+回顾hibernate编程中，如何使用事务？
+transaction.begin();
+session.save(new User());
+transaction.commit();
+transaction.rollback();
+
+回顾spring编程中，如何使用事务？
+spring可以分为二种
+>编程式事务，藕合
+>声明式事务，解藕，提倡
+
+Oracle的事务只针对DML操作，即select/insert/update/delete
+
+回顾MySQL的事务开始：start transaction
+Oracle的事务开始：第一条DML操作做为事务开始
+
+Oracle的提交事务
+（1）显示提交：commit	
+（2）隐藏提交：DDL/DCL/exit(sqlplus工具)
+注意：提交是的从事务开始到事务提交中间的内容，提交到ORCL数据库中的DBF二进制文件
+
+Oracle的回滚事务
+（1）显示回滚：rollback
+（2）隐藏回滚：关闭窗口(sqlplus工具)，死机，掉电
+注意：回滚到事务开始的地方
+
+回顾什么是回滚点？
+在操作之间设置的一个标志位，用于将来回滚之用
+
+回顾为什么要设置回滚点？savepoint a;rollback to savepoint a;
+如果没有设置回滚点的话，Oracle必须回滚到事务开始的地方，其间做的一个正确的操作也将撤销
+
+使用savepoint 回滚点，设置回滚点a	
+savepoint a;
+
+使用rollback to savepoint，回滚到回滚点a处
+rollback to savepoint a;
+
+Oracle提交或回滚后，原来设置的回滚点还有效吗？
+原回滚点无效了
+
+Oracle之所以能回滚的原因是？
+主要机制是实例池 
+
+回顾MySQL支持的四种事务隔离级别及能够解决的问题
+（1）read uncommitted -- 不能解决任何缺点
+（2）read committed   -- 脏读，Oracle默认
+（3）reapatable read  -- 不可重复读，脏读，MySQL默认
+（4）serializable     -- 幻读，不可重复读，脏读，效率低
+
+注意：jdbc/dbutils速度快，但书写烦
+      mybaits速度中等，但书写"中等"
+      hibernate速度慢，但书写"爽"
+      
+Oracle支持的二种事务隔离级别及能够解决的问题
+Oracle支持：read committed 和 serializable
+
+Oracle中设置事务隔离级别为serializable
+set transaction isolation level serializable;
+
+演示二个用户同时操作emp表，删除KING这条记录，会有什么后果？
+因为有隔离级别的存在，所以不会出现二个用户都删除了KING这条记录，
+一定是一个用户删除KING成功,在该用户没有提交的情况下，另一个用户等待
+
+
+-------------------------------------------------------------------------------------访问其它用户下的对象
+
+
+声明：scott或hr叫用户名/方案名/空间名
+      scott--tiger
+      hr-----lion
+      
+查询当前用户是谁
+show user;
+
+查询scott自己表空间下的所有对象时，可加，或不加用户名select * from emp;
+select * from emp;
+或
+select * from scott.emp;
+
+以sysdba身份解锁hr普通帐户
+alter user hr account unlock;
+
+以sysdba身份设置hr普通帐户的密码
+alter user hr identified by lion;
+
+当scott查询hr表空间下的所有表时，必须得加用户名
+select * from hr.jobs;
+
+在默认情况下，每个用户只能查询自已空间下的对象的权限，不能查询其它用户空间下的对象
+
+以sysdba身份角色，授予scott用户查询所有用户空间下的对象权限
+grant select any table to scott;
+
+以sysdba身份，撤销scott用户查询所有用户空间下的对象权限
+revoke select any table from scott;
+
+scott自已查看自己所拥有的权限
+select * from user_sys_privs;
+
+从scott用户空间导航到sysdba用户空间
+conn / as sysdba;
+
+从sysdba用户空间导航到scott用户空间
+conn scott/tiger;
+
+从scott用户空间导航到hr用户空间
+conn hr/lion;
+
+查询hr用户空间中的所有对象
+select * from tab;
+
+从hr用户空间导航到scott用户空间
+conn scott/tiger;
+
+在scott用户空间下，查询hr用户空间下的jobs表，必须加上hr用户空间名
+select * from hr.jobs;
+
+
+-------------------------------------------------------------------------------------视图
+
+
+什么是视图【View】 
+（1）视图是一种虚表 
+（2）视图建立在已有表的基础上, 视图赖以建立的这些表称为基表
+（3）向视图提供数据内容的语句为 SELECT 语句,可以将视图理解为存储起来的 SELECT 语句
+（4）视图向用户提供基表数据的另一种表现形式
+（5）视图没有存储真正的数据，真正的数据还是存储在基表中
+（6）程序员虽然操作的是视图，但最终视图还会转成操作基表
+（7）一个基表可以有0个或多个视图 
+
+什么情况下会用到视图
+（1）如果你不想让用户看到所有数据（字段，记录），只想让用户看到某些的数据时，此时可以使用视图
+（2）当你需要减化SQL查询语句的编写时，可以使用视图，但不提高查询效率
+
+视图应用领域
+（1）银行，电信，金属，证券军事等不便让用户知道所有数据的项目中
+
+视图的作用
+（1）限制数据访问
+（2）简化复杂查询
+（3）提供数据的相互独立
+（4）同样的数据，可以有不同的显示方式
+
+基于emp表所有列，创建视图emp_view_1，create view 视图名 as select对一张或多张基表的查询
+create view emp_view_1
+as
+select * from emp;
+
+默认情况下，普通用户无权创建视图，得让sysdba为你分配creare view的权限 
+
+以sysdba身份，授权scott用户create view权限
+grant create view to scott;
+
+以sysdba身份，撤销scott用户create view权限
+revoke create view from scott;
+
+基于emp表指定列，创建视图emp_view_2，该视图包含编号/姓名/工资/年薪/年收入（查询中使用列别名）
+create view emp_view_2
+as
+select empno "编号",ename "姓名",sal "工资",sal*12 "年薪",sal*12+NVL(comm,0) "年收入"
+from emp;
+
+基于emp表指定列，创建视图emp_view_3(a,b,c,d,e)，包含编号/姓名/工资/年薪/年收入（视图中使用列名）
+create view emp_view_3(a,b,c,d,e)
+as
+select empno "编号",ename "姓名",sal "工资",sal*12 "年薪",sal*12+NVL(comm,0) "年收入"
+from emp;
+
+查询emp_view_3创建视图的结构
+desc emp_view_3;
+
+修改emp_view_3(id,name,salary,annual,income)视图，create or replace view 视图名 as 子查询
+create or replace view emp_view_3(id,name,salary,annual,income)
+as
+select empno "编号",ename "姓名",sal "工资",sal*12 "年薪",sal*12+NVL(comm,0) "年收入"
+from emp;
+
+查询emp表，求出各部门的最低工资，最高工资，平均工资
+select min(sal),max(sal),round(avg(sal),0),deptno
+from emp
+group by deptno;
+
+创建视图emp_view_4，视图中包含各部门的最低工资，最高工资，平均工资
+create or replace view emp_view_4
+as
+select deptno "部门号",min(sal) "最低工资",max(sal) "最高工资",round(avg(sal),0) "平均工资"
+from emp
+group by deptno;
+
+创建视图emp_view_5，视图中包含员工编号，姓名，工资，部门名，工资等级
+create or replace view emp_view_5
+as
+select e.empno "编号",e.ename "姓名",e.sal "工资",d.dname "部门名",s.grade "工资等级"
+from emp e,dept d,salgrade s
+where (e.deptno=d.deptno) and (e.sal between s.losal and s.hisal);
+
+删除视图emp_view_1中的7788号员工的记录，使用delete操作，会影响基表吗
+delete from emp_view_1 where empno=7788;写法正确，会影响基表
+
+修改emp_view_1为只读视图【with read only】，再执行上述delete操作，还行吗？
+create or replace view emp_view_1
+as
+select * from emp
+with read only;
+不能进行delete操作了
+
+删除视图中的【某条】记录会影响基表吗？
+会影响基表
+
+将【整个】视图删除，会影响表吗？
+不会影响基表
+
+删除视图，会进入回收站吗？
+不会进入回收站
+
+删除基表会影响视图吗？
+会影响视图
+
+闪回基表后,视图有影响吗？
+视图又可以正常工作了
+
+
+-------------------------------------------------------------------------------------同义词
+
+
+什么是同义词【Synonym】
+（1）对一些比较长名字的对象(表，视图，索引，序列，。。。）做减化，用别名替代
+
+同义词的作用
+（1）缩短对象名字的长度
+（2）方便访问其它用户的对象
+
+创建与salgrade表对应的同义词，create synonym 同义词 for 表名/视图/其它对象
+create synonym e for salgrade;
+create synonym ev5 for emp_view_5;
+
+以sys身份授予scott普通用户create synonym权限
+grant create synonym to scott;
+
+以sys身份从scott普通用户撤销create synonym权限
+revoke create synonym from scott;
+
+使用同义词操作salgrade表
+select * from s;
+
+删除同义词
+drop synonym ev5;
+
+删除同义词，会影响基表吗？
+不会影响基表
+
+删除基表，会影响同义词吗？
+会影响同义词
+
+
+-------------------------------------------------------------------------------------序列
+
+
+什么是序列【Sequence】
+（1）类似于MySQL中的auto_increment自动增长机制，但Oracle中无auto_increment机制
+（2）是oracle提供的一个产生唯一数值型值的机制
+（3）通常用于表的主健值
+（4）序列只能保证唯一，不能保证连续
+     声明：oracle中，只有rownum永远保持从1开始，且继续
+（5）序列值，可放于内存，取之较快
+ 
+题问：为什么oracle不直接用rownum做主健呢？
+rownum=1这条记录不能永远唯一表示SMITH这个用户
+但主键=1确可以永远唯一表示SMITH这个用户
+
+为什么要用序列
+（1）以前我们为主健设置值，需要人工设置值，容易出错
+（2）以前每张表的主健值，是独立的，不能共享
+
+为emp表的empno字段，创建序列emp_empno_seq，create sequence 序列名
+create sequence emp_empno_seq;
+
+删除序列emp_empno_seq，drop sequence 序列名
+drop sequence emp_empno_seq;
+
+查询emp_empno_seq序列的当前值currval和下一个值nextval，第一次使用序列时，必须选用：序列名.nextval
+select emp_empno_seq.nextval from dual;
+select emp_empno_seq.currval from dual;
+
+使用序列，向emp表插入记录，empno字段使用序列值
+insert into emp(empno) values(emp_empno_seq.nextval);
+insert into emp(empno) values(emp_empno_seq.nextval);
+insert into emp(empno) values(emp_empno_seq.nextval);
+
+修改emp_empno_seq序列的increment by属性为20，默认start with是1，alter sequence 序列名
+alter sequence emp_empno_seq
+increment by 20;
+
+修改修改emp_empno_seq序列的的increment by属性为5
+alter sequence emp_empno_seq
+increment by 5;
+
+修改emp_empno_seq序列的start with属性，行吗
+alter sequence emp_empno_seq
+start with 100;
+
+有了序列后，还能为主健手工设置值吗？
+insert into emp(empno) values(9999);
+insert into emp(empno) values(7900);
+
+删除表，会影响序列吗？
+你无法做insert操作
+
+删除序列，会影响表吗？
+表真正亡，序列亡
+
+在hibernate中，如果是访问oracle数据库服务器，那么User.hbm.xml映射文件中关于<id>标签如何配置呢？
+<id name="id" column="id">
+   <generator class="increment/identity/uuid/【sequence】/【native】"/>
+</id>
+
+
+-------------------------------------------------------------------------------------索引
+
+
+什么是索引【Index】
+（1）是一种快速查询表中内容的机制，类似于新华字典的目录
+（2）运用在表中某个/些字段上，但存储时，独立于表之外
+
+为什么要用索引
+（1）通过指针加速Oracle服务器的查询速度
+（2）通过rowid快速定位数据的方法，减少磁盘I/O
+     rowid是oracle中唯一确定每张表不同记录的唯一身份证
+
+rowid的特点
+（1）位于每个表中，但表面上看不见，例如：desc emp是看不见的
+（2）只有在select中，显示写出rowid，方可看见
+（3）它与每个表绑定在一起，表亡，该表的rowid亡，二张表rownum可以相同，但rowid必须是唯一的
+（4）rowid是18位大小写加数字混杂体，唯一表代该条记录在DBF文件中的位置
+（5）rowid可以参与=/like比较时，用''单引号将rowid的值包起来，且区分大小写
+（6）rowid是联系表与DBF文件的桥梁
+
+索引的特点
+（1）索引一旦建立, Oracle管理系统会对其进行自动维护, 而且由Oracle管理系统决定何时使用索引
+（2）用户不用在查询语句中指定使用哪个索引
+（3）在定义primary key或unique约束后系统自动在相应的列上创建索引
+（4）用户也能按自己的需求，对指定单个字段或多个字段，添加索引
+
+什么时候【要】创建索引
+（1）表经常进行 SELECT 操作
+（2）表很大(记录超多)，记录内容分布范围很广
+（3）列名经常在 WHERE 子句或连接条件中出现
+ 注意：符合上述某一条要求，都可创建索引，创建索引是一个优化问题，同样也是一个策略问题
+       
+什么时候【不要】创建索引
+（1）表经常进行 INSERT/UPDATE/DELETE 操作
+（2）表很小(记录超少)
+（3）列名不经常作为连接条件或出现在 WHERE 子句中
+同上注意
+
+为emp表的empno单个字段，创建索引emp_empno_idx，叫单列索引，create index 索引名 on 表名(字段,...)
+create index emp_empno_idx
+on emp(empno);
+
+为emp表的ename,job多个字段，创建索引emp_ename_job_idx，多列索引/联合索引
+create index emp_ename_job 
+on emp(ename,job);
+如果在where中只出现job不使用索引
+如果在where中只出现ename使用索引
+我们提倡同时出现ename和job
+
+注意：索引创建后，只有查询表有关，和其它（insert/update/delete）无关,解决速度问题
+
+删除emp_empno_idx和emp_ename_job_idx索引，drop index 索引名
+drop index emp_empno_idx;
+drop index emp_ename_job_idx;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+印象笔记>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

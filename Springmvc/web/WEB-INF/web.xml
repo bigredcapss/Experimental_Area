@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>SpringMVC</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <!--spring提供的编码过滤器，对request和response进行拦截 -->
+  <filter>
+	<filter-name>CharacterEncodingFilter</filter-name>
+	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	<init-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</init-param>
+	<init-param>
+		<param-name>forceEncoding</param-name>
+		<param-value>true</param-value>
+	</init-param>
+  </filter>
+  <filter-mapping>
+	<filter-name>CharacterEncodingFilter</filter-name>
+	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  
+  <!--/:解决静态资源被拦截的方法：方式一：利用Tomcat的defaultServlet来处理静态文件  -->
+<!-- 		
+        <servlet-mapping>
+			<servlet-name>default</servlet-name>
+			<url-pattern>*.jpg</url-pattern>
+		</servlet-mapping>
+		<servlet-mapping>
+			<servlet-name>default</servlet-name>
+			<url-pattern>*.js</url-pattern>
+		</servlet-mapping>
+
+		<servlet-mapping>
+			<servlet-name>default</servlet-name>
+			<url-pattern>*.css</url-pattern>
+		</servlet-mapping> -->
+  
+  <!-- 配置前端控制器:在配置前端控制器的时候，需要加载spring的配置文件
+  1.默认的spring文件的名字[servlet-name]-servlet.xml;位置在WEB-INF目录下；注：名字，固定写法
+  2.配置文件路径初始化参数，指定spring配置文件的位置；名字，路径可自定义；可以指定加载多个spring配置文件
+   -->
+<!-- 方式一： -->
+<!--
+  <servlet>
+  	<servlet-name>SpringMVC</servlet-name>
+  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>SpringMVC</servlet-name>
+  	<url-pattern>*.do</url-pattern>
+  </servlet-mapping> 
+-->
+<!-- 方式二： --> 
+   <servlet>
+  	<servlet-name>SpringMVC</servlet-name>
+  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  	<!-- 指定加载xml文件的路径，如果有多个路径，中间空格隔开；注：一旦指定了spring文件的路径，默认的spring配置文件不在生效 -->
+  		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring_anno.xml</param-value>
+		</init-param>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>SpringMVC</servlet-name>
+  	<!--
+  	/*:能处理浏览器的请求，但是会对返回的资源(xxx.jsp等)进行再一次拦截，页面获取不到内容(测试结果为死循环) ；
+  	/:表示对页面不处理(html,jsp等)，但是像静态资源(css,js,png,jpg等)还是会被拦截
+  	-->
+  	<url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
+</web-app>

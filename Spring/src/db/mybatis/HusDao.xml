@@ -1,0 +1,9 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="db.HusDao">
+	<update id="updateHus" parameterType="db.Hus">
+		update hus set name=#{name},age=#{age}
+		where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xmlns:tx="http://www.springframework.org/schema/tx"
+ xmlns:aop="http://www.springframework.org/schema/aop"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx.xsd 
+          http://www.springframework.org/schema/aop
+          http://www.springframework.org/schema/aop/spring-aop.xsd
+          ">
+          <!-- 配置service层对象 目标对象-->
+          <bean name="service" 
+          class="tran.service.HusServiceImpl">
+          <!-- 注入dao层对象,这里的dao是jdbc.xml文件中的，ClassPathXmlApplicationContext类会去加载对应xml文件中的对应的
+          dao对象-->
+          	<property name="dao" ref="dao"></property>
+          </bean>
+          
+          <!-- 配置jdbc的事务管理器 (切面类)-->
+		<bean name="transactionManager"
+		 class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<!-- 注入数据源，ClassPathXmlApplicationContext类会去加载对应xml文件中的对应的
+          dataSource对象-->
+			<property name="dataSource" ref="dataSource"></property>
+		</bean>
+		<!-- 配置事务拦截器(通知advice,负责把切面代码织入到切入点执行之前、之后、抛异常) -->
+		<tx:advice id="transactionInterceptor" transaction-manager="transactionManager">
+			<!-- 配置事务的属性 -->
+			<tx:attributes>
+			<!-- *代表切入点中的所有的方法 -->
+				<tx:method name="*" propagation="REQUIRED" rollback-for="Throwable"/>
+				<!-- <tx:method name="save*" propagation="REQUIRED" rollback-for="Throwable"/> -->
+				<!-- <tx:method name="select*" propagation="REQUIRED" read-only="true"/> -->
+			</tx:attributes>
+		</tx:advice>
+		
+		<!-- 配置aop -->
+	<aop:config>
+		<!-- 配置切入点 -->
+		<aop:pointcut expression="execution(* tran.service.*.*(..))" id="myPointCut"/>
+		<!-- 配置事务拦截器在哪一个切入点上起作用 -->
+		<aop:advisor advice-ref="transactionInterceptor" pointcut-ref="myPointCut"/>
+	</aop:config>
+
+</beans>          

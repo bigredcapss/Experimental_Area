@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指定的是和当前映射文件绑定的接口(全包名+类名) -->
+<mapper namespace="one2one.One2OneMapper">
+<resultMap type="bean.Hus" id="hus_model">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<result property="age" column="age"/>
+</resultMap>
+
+<!-- mysql主键auto_increment修饰：
+Mysql策略：useGeneratedKeys属性开启主键自增，keyProperty指向作为参数传入的对象属性(和表中主键对应的属性);插入数据成功，自动生成主键主键会自动返回给mybatis,mybatis基于keyProperty设置给对应的对象属性
+ -->
+<insert id="saveHus" parameterType="hus" useGeneratedKeys="true" keyProperty="id">
+	insert into hus (name,age) values (#{name},#{age})
+</insert>
+<!-- 接收多个参数，这里不用考虑parameterType -->
+<!-- 传入多个参数的时候：
+方式一：直接基于参数位置角标获取值：#{0}获取第一个参数的值，以此类推，#{1}，#{2}；
+方式二：#{param1}，#{param2}
+方式三：在接口的方法中给参数加@Param("key")注解，在映射文件中直接#{key}取值
+ -->
+<update id="updateHus">
+	update hus set name=#{name},age=#{age} where id=#{id}
+</update>
+
+<delete id="deleteHus" parameterType="int">
+	delete from hus where id = #{id}
+</delete>
+
+<select id="findHusById" parameterType="int" resultType="hus">
+	select * from hus where id=#{id}
+</select>
+
+<select id="findHus" resultType="hus">
+	select * from hus
+</select>
+
+<select id="findHus_Set" resultMap="hus_model">
+	select * from hus
+</select>
+
+<select id="findHus_SortedSet" resultMap="hus_model">
+	select * from hus
+</select>
+<!-- 当返回的结果集是map时，resultType="map" -->
+<select id="findHus_Map" parameterType="int" resultType="map">
+	select * from hus where id = #{id}
+</select>
+
+<select id="findHus_Maps" resultType="map">
+	select * from hus
+</select>
+
+<select id="findHus_count" resultType="int">
+	select count(*) from hus
+</select>
+
+<select id="findHus_name" resultType="java.lang.String">
+	select name from hus
+</select>
+
+<insert id="saveWife" parameterType="wife" useGeneratedKeys="true" keyProperty="id">
+	insert into wife (id,name,age,hus_id) values (#{id},#{name},#{age},#{hus.id})
+</insert>
+
+<!-- 一对一关联查询 
+方法一
+-->
+<resultMap type="hus" id="hus_model1">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<result property="age" column="age"/>
+	<result property="wife.id" column="ids"/>
+	<result property="wife.name" column="names"/>
+	<result property="wife.age" column="ages"/>
+</resultMap>
+<!-- 对象级联查询，多个表中列名相同，要起别名 -->
+<select id="findHus_wife" parameterType="int" resultMap="hus_model1">
+	select h.id,h.name,h.age,w.id ids,w.name names,w.age ages
+	from hus h,wife w
+	where h.id=w.hus_id and h.id=#{id}
+</select>
+
+<select id="findHuss_wife" resultMap="hus_model1">
+	select h.id,h.name,h.age,w.id ids,w.name names,w.age ages
+	from hus h,wife w
+	where h.id=w.hus_id
+</select>
+
+<!-- 一对一关联查询
+方法二
+ -->
+<resultMap type="hus" id="hus_model2">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<result property="age" column="age"/>
+	<!-- 返回的是List<Hus>,所以这里使用associate标签 
+	专门处理一对一映射关系的标签，property属性指向引用变量wife
+	-->
+	<association property="wife" resultMap="wife_model1"></association>
+</resultMap>
+<resultMap type="wife" id="wife_model1">
+	<id property="id" column="ids"/>
+	<result property="name" column="names"/>
+	<result property="age" column="ages"/>
+</resultMap>
+<select id="findHuss_wife1" resultMap="hus_model2">
+	select h.id,h.name,h.age,w.id ids,w.name names,w.age ages
+	from hus h,wife w
+	where h.id=w.hus_id
+</select>
+
+<!-- 一对一关联查询
+方法三
+ -->
+<resultMap type="hus" id="hus_model3">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<result property="age" column="age"/>
+	<!-- javaType="wife"这里的wife是全限定名 -->
+	<association property="wife" javaType="wife">
+		<id property="id" column="ids"/>
+		<result property="name" column="names"/>
+		<result property="age" column="ages"/>
+	</association>
+</resultMap>
+<select id="findHuss_wife2" resultMap="hus_model3">
+	select h.id,h.name,h.age,w.id ids,w.name names,w.age ages
+	from hus h,wife w
+	where h.id=w.hus_id
+</select>
+
+<!-- 一对一关联查询
+方法四
+ -->
+<!--基于wife表的hus_id查询一行记录 -->
+<!-- 注：id="selectWifeByHus_Id"这里的方法名可以不在接口中声明；当然也可以声明，后期可以调用 -->
+<select id="selectWifeByHus_Id" parameterType="int" resultType="wife">
+	select id,name,age from wife where hus_id=#{id}
+</select>
+<!-- 查询hus表中的记录，再通过id到wife表中查询 -->
+<resultMap type="hus" id="hus_model4">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<result property="age" column="age"/>
+	<!--  select="selectWifeByHus_Id"该方法基于该主键（从hus表中查到的主键查询）column="id"查询 -->
+	<association property="wife" column="id" select="selectWifeByHus_Id"></association>
+</resultMap>
+<select id="findHuss_wife3" resultMap="hus_model4">
+	select id,name,age from hus
+</select>
+ 
+<!-- 一对一关联查询
+方法五
+ -->
+<resultMap type="hus" id="hus_model5">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<result property="age" column="age"/>
+</resultMap>
+<!-- extends=""属性表示从某个模板中把属性配置继承过来 -->
+<resultMap type="hus" id="hus_wife_model1" extends="hus_model5">
+		<id property="wife.id" column="ids"/>
+		<result property="wife.name" column="names"/>
+		<result property="wife.age" column="ages"/>
+</resultMap>
+<select id="findHuss_wife4" resultMap="hus_wife_model1">
+ 	select h.id,h.name,h.age,w.id ids,w.name names,w.age ages
+	from hus h,wife w
+	where h.id=w.hus_id
+</select>
+</mapper>

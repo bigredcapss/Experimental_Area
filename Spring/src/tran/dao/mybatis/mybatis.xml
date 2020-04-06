@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          ">
+    <!-- 读取配置文件，后面取值${key} -->
+    <context:property-placeholder location="classpath:db/db.properties"/>
+	<!-- 获取数据源 -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>${driver}</value>
+		</property>
+		<property name="url">
+			<value>${url}</value>
+		</property>
+		<property name="username">
+			<value>${user}</value>
+		</property>
+		<property name="password">
+			<value>${password}</value>
+		</property>
+      </bean>
+      <!-- 构建sqlSessionFactory对象 -->
+      <!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="db.Hus"></property>
+		<property name="configurationProperties">
+			<props>
+				<prop key="cacheEnabled">true</prop>
+			</props>
+		</property>
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations"
+			value="classpath:tran/dao/mybatis/HusDao.xml" />
+	</bean>
+	<!-- 自动扫描映射接口所在的包 -->
+	<!-- 将来可以通过接口的名字首字母小写作
+	为beanName,从spring容器中拿出自动生成的
+	该接口的实现类 (相当于在mybatis中使用sqlSession对象创建接口的实现类)-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="tran" />
+	</bean>
+</beans>

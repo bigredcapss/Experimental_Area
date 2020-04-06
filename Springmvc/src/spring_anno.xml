@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/mvc
+  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  ">
+<!-- 对SpringMVC注解的支持 -->  
+<mvc:annotation-driven></mvc:annotation-driven>
+<!-- 扫描写注解的类有哪些 -->
+<context:component-scan base-package="com.zzuli.web.annotion"></context:component-scan>
+
+<!-- 配置视图解析器 -->
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>  
+	<property name="prefix" value="/WEB-INF/jsp/"/>  
+	<property name="suffix" value=".jsp"/>  
+</bean>
+<!--收到相应请求后直接选择相应的视图,path指向资源名字，view-name指向逻辑视图名(前提是配置了视图解析器);若没有配置视图解析器，则指向物理视图名 -->
+<mvc:view-controller path="/login" view-name="login"/>
+<mvc:view-controller path="/register" view-name="register"/>
+<mvc:view-controller path="/register2" view-name="register2"/>
+<!-- 解决静态资源被拦截的方法-->
+<mvc:default-servlet-handler/>
+<bean name="user" class="com.zzuli.web.bean.User">
+	<property name="id" value="1"></property>
+	<property name="name" value="we"></property>
+	<property name="age" value="23"></property>
+</bean>
+<!-- 产生服务的工厂，基于配置注册转换器类 -->
+<bean name="formatService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+	<property name="converters">
+		<set>
+ 		   <bean class="com.zzuli.web.convert.StringToDateConverter"></bean>
+		</set>
+	</property>
+</bean>
+<!-- 在mvc标签中指定这个转换服务器 -->
+<mvc:annotation-driven conversion-service="formatService"/>
+
+</beans>

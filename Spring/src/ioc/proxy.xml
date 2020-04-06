@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  ">
+  <!-- 让spring对jdk代理工厂进行管理和配置 -->
+  
+  <!-- 目标对象的配置 -->
+  <bean name="target" class="pojo.BookServiceImpl"></bean>
+  <!-- 处理器的配置 -->
+  <bean name="handler" class="aop.proxy.jdkproxy.MyHandler">
+  	<property name="target" ref="target"></property>
+  </bean>
+  <!-- 代理对象的配置 -->
+  <bean name="proxy" class="aop.proxy.jdkproxy.JdkProxyFactory">
+  	<property name="target" ref="target"></property>
+  	<property name="interfaces">
+  		<array>
+  			<value>pojo.BookService</value>
+  		</array>
+  	</property>
+  	<property name="handler" ref="handler"></property>
+  </bean>
+  
+  </beans>

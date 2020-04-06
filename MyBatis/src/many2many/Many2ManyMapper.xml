@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指定的是和当前映射文件绑定的接口(全包名+类名) -->
+<mapper namespace="many2many.Many2ManyMapper">
+<insert id="saveStu" parameterType="stu" useGeneratedKeys="true" keyProperty="id">
+	insert into s_stu (name) values (#{name})
+</insert>
+
+<insert id="saveCourse" parameterType="course" useGeneratedKeys="true" keyProperty="id">
+	insert into s_course (name) values (#{name})
+</insert>
+
+<select id="findStuById" parameterType="int" resultType="stu">
+	select id,name from s_stu where id=#{id}
+</select>
+
+<select id="findCourseById" parameterType="int" resultType="course">
+	select id,name from s_course where id=#{id}
+</select>
+<!-- 传入多个参数 -->
+<insert id="saveStu_Course">
+	insert into stu_course values (#{stu.id},#{course.id})
+</insert>
+
+<!-- 多对多 -->
+<resultMap type="course" id="course_model1">
+	<id property="id" column="ids"/>
+	<result property="name" column="names"/>
+</resultMap>
+<resultMap type="stu" id="stu_model1">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<collection property="courses" resultMap="course_model1"></collection>
+</resultMap>
+<select id="findStuAndCourse" parameterType="int" resultMap="stu_model1">
+	select s.id,s.name,c.id ids,c.name names
+	from s_stu s,s_course c,stu_course sc
+	where s.id=sc.stu_id and sc.cou_id=c.id
+	and s.id=#{id}
+</select>
+
+<resultMap type="stu" id="stu_model2">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+</resultMap>
+<resultMap type="course" id="course_model2">
+	<id property="id" column="ids"/>
+	<result property="name" column="names"/>
+	<collection property="stus" resultMap="stu_model2"></collection>
+</resultMap>
+<select id="findCourseAndStu" parameterType="int" resultMap="course_model2">
+	select s.id,s.name,c.id ids,c.name names
+	from s_stu s,s_course c,stu_course sc
+	where s.id=sc.stu_id and sc.cou_id=c.id
+	and c.id=#{id}
+</select>
+
+
+</mapper>
+
+

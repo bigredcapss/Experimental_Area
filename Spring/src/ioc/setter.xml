@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd">
+<bean name="student,stu1,stu2" class="bean.Student" scope="prototype">
+<!-- 
+1.构建对象；2.设置属性，setId->反射getDeclaredMethod("setId")->方法镜像public void setId(long)->getParameterType() [Integer]->Integer id = parse.Integer("1");->student.setId(id)
+ -->
+	<property name="id" value="1"></property>
+	<property name="name" value="tom"></property>
+	<property name="age">
+		<value>33</value>
+	</property>
+	<property name="email" value="12@qq.com"></property>
+</bean>  
+  
+</beans>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop.xsd
+  ">
+    <!-- 目标对象的配置 -->
+  <bean name="target1" class="pojo.BookServiceImpl"></bean>
+  <bean name="target2" class="pojo.ProductService"></bean>
+  <!-- 自定义通知类的绑定 -->
+  <bean name="notice" class="aop.spring.defineaopConfig.DefineNoticeAdvice"></bean>
+  <aop:config>
+  <!-- 指定切面 :切点语言格式：execution ( 返回类型 方法路径.方法名(参数) )-->
+  	<aop:pointcut expression="execution(* pojo.*.save*(..))" id="mypointcut"/>
+  	<!-- 指定方法和切面绑定 ,ref指向自定义通知的类-->
+	<aop:aspect ref="notice">
+	<!-- method指向自定义通知类中的方法,pointcut直接写表达式，作用于那些方法；pointcut-ref指向切面对象 -->
+		<!-- <aop:before method="beforeTest" pointcut-ref="mypointcut"/> -->
+		
+		<!-- 后置通知after表示不管方法是否正常结束都会起作用 -->
+		<!-- <aop:after method="afterTest" pointcut-ref="mypointcut"/> -->
+		
+		<!-- after-returning表示方法正常结束才会起作用(抛异常时候不起作用) -->
+		<!-- <aop:after-returning method="afterReturningTest" pointcut-ref="mypointcut"/> -->
+		<!-- 环绕通知 -->
+		<aop:around method="aroundTest" pointcut-ref="mypointcut"/>
+		<!-- 异常通知：throwing表示异常的名字，注意：该名字和自定义通知中方法的参数保持一致 -->
+<!-- 		<aop:after-throwing method="throwE" pointcut-ref="mypointcut" throwing="ex"/>
+ -->		
+
+		
+	</aop:aspect>
+  </aop:config>
+  </beans>

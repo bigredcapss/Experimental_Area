@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  ">
+  <!-- 目标对象的配置 -->
+  <bean name="target1" class="pojo.BookServiceImpl"></bean>
+  <bean name="target2" class="pojo.ProductService"></bean>
+  <!-- 通知的配置 -->
+  <bean name="before" class="aop.spring.moreproxy.BeforeAdviceTest"></bean>
+  <!-- 增强器的配置 增强器=切面+通知-->
+  <bean name="advisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+  	<property name="advice" ref="before"></property>
+  	<property name="patterns">
+  		<array>
+  			<value>.*save.*</value>
+  		</array>
+  	</property>
+  </bean>
+  
+  <!-- 自动完成advisor的配置作用于目标对象上，通过目标对象bean标签的名字获取代理对象 
+  DefaultAdvisorAutoProxyCreator配置的时候至少有一个advisor标签
+  -->
+  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"></bean>
+  
+  </beans>

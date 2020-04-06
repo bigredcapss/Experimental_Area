@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- 基于构造器给spring构建的对象传参数 -->
+  <bean name="student" class="bean.Student">
+  <!-- 方式1.基于角标index传参数，角标从0开始，角标代表的是赋值的位置 ，配置constructor-arg位置不会影响赋值-->
+  	<constructor-arg index="0" value="11"></constructor-arg>
+  	<constructor-arg index="1" value="tom"></constructor-arg>
+  	<constructor-arg index="2" value="18"></constructor-arg>
+  	<constructor-arg index="3" value="11@qq.com"></constructor-arg>
+  </bean>
+  <!-- 方式2.基于构造器参数的类型配置，基本数据类型直接写类型，type属性要和构造器中设置的参数的类型匹配 ，基于类型匹配构造器不能换位置-->
+  <bean name="student1" class="bean.Student">
+  	<constructor-arg type="int" value="14"></constructor-arg>
+  	<constructor-arg type="java.lang.String" value="jj"></constructor-arg>
+  	<constructor-arg type="int" value="10"></constructor-arg>
+  	<constructor-arg type="java.lang.String" value="14@qq.com"></constructor-arg>
+  </bean>
+  <!--方式3.基于构造器中的变量名设置参数,name指向构造器中的变量名 -->
+  <bean name="student2" class="bean.Student">
+  	<constructor-arg name="id" value="24"></constructor-arg>
+  	<constructor-arg name="name" value="tt"></constructor-arg>
+  	<constructor-arg name="age" value="12"></constructor-arg>
+  	<constructor-arg name="email" value="34@qq.com"></constructor-arg>
+  </bean>
+  
+  <!-- 方式4：前三种方式结合使用 -->
+  <bean name="student3" class="bean.Student">
+  	<constructor-arg index="0" name="id">
+  		<value>13</value>
+  	</constructor-arg>
+  	<constructor-arg index="1" name="name">
+  		<bean name="str" class="java.lang.String">
+  			<constructor-arg index="0" value="uu"></constructor-arg>
+  		</bean>
+  	</constructor-arg>
+  	<constructor-arg index="2" name="age" value="67"></constructor-arg>
+  	<constructor-arg index="3" name="email" value="54@qq.com"></constructor-arg>
+  </bean>
+  
+ </beans>

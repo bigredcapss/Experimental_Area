@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <!-- bean标签让spring构建对象
+   name属性：指的是构建对象的名字；calss属性：指向构建对象的全限定名
+   userService=Class.forName("bean.UserService").newInstance();
+   -->
+   <!-- scope属性：控制对象创建的是不是单例对象；prototype:非单例，singleton:单例（默认） -->
+  <bean name="userService" class="bean.UserService" scope="prototype">
+  	<!-- property标签决定给当前对象设置属性的方式采用set拼接name属性的值；
+  	1.参数是基本数据类型，value属性声明；2.参数是引用类型，ref属性声明；
+  	 -->
+  	<property name="dao" ref="ud"></property>
+  </bean>
+<bean name="ud" class="bean.UserDao"></bean>
+  
+</beans>

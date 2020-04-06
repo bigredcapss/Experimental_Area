@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <bean name="de_coll" class="bean.CollTest">
+  	<property name="array">
+  		<array>
+  			<value>array1</value>
+  			<value>array2</value>
+  			<value>array3</value>
+  		</array>
+  	</property>
+  	<!-- 自定义集合 -->
+  	<property name="list">
+  	<!-- list-class指定spring构建集合的类型：构建的集合类型是java.util.LinkedList，里面的值为java.lang.String类型 -->
+  		<util:list list-class="java.util.LinkedList" value-type="java.lang.String">
+  			<value>list1</value>
+  			<value>list2</value>
+  		</util:list>
+  	</property>
+  	<property name="set">
+  	<!-- set-class指定spring构建的set集合对象 -->
+  		<util:set set-class="java.util.HashSet" value-type="java.lang.String">
+  		 	<value>set1</value>
+  		 	<value>set2</value>
+  		</util:set>
+  	</property>
+  	<property name="map">
+  	<!-- map-class指定spring构建的map集合对象 -->
+  		<util:map map-class="java.util.HashMap" >
+  			<entry key="key1" value="te1"></entry>
+  			<entry key="key2" value="te2"></entry>
+  		    <entry key="key3" value="te3"></entry>
+  		</util:map>
+  	</property>
+  	<property name="pro">
+  	<!-- location直接将properties文件的key=value内容加载到集合对象中，路径也是基于classpath(src的下一级目录) -->
+  		<util:properties location="ioc/db.properties"></util:properties>
+  	</property>
+  </bean>
+   
+  
+  </beans>

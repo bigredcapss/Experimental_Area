@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- 使用实例工厂创建bean实例 -->
+  
+  <!-- 1.先构建对象   Class.forName("bean.InstanceFactory").newInstance() -->
+  <bean name="factory" class="bean.InstanceFactory">
+  	<property name="name" value="tomjake"></property>
+  </bean>
+  <!-- 2.调用工厂中的方法
+  ud=factory.getDao()
+   --> 
+  <bean name="ud" factory-bean="factory" factory-method="getDao"></bean>
+  </beans>

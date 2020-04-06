@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指定的是和当前映射文件绑定的接口(全包名+类名) -->
+<mapper namespace="one2many.One2ManyMapper">
+<insert id="saveUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+	insert into s_user (name) values (#{name})
+</insert>
+<insert id="saveOrder" parameterType="order" useGeneratedKeys="true" keyProperty="id">
+	insert into s_order (id,name,price,user_id) values (#{id},#{name},#{price},#{user.id})
+</insert>
+
+<resultMap type="order" id="order_model1">
+	<id property="id" column="ids"/>
+	<result property="name" column="names"/>
+	<result property="price" column="price"/>
+</resultMap>
+<resultMap type="user" id="user_model1">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<!--collection表示集合对象， property指向当前封装对象中的集合引用对象 -->
+	<collection property="orders" resultMap="order_model1"></collection>
+</resultMap>
+<select id="findUserAndOrder" parameterType="int" resultMap="user_model1">
+	select u.id,u.name,o.id ids,o.name names,o.price
+	from s_user u,s_order o
+	where u.id=o.user_id and u.id=#{id}
+</select>
+
+<!-- 基于用户的id查找订单对象 -->
+<select id="findOrderByUser_id" parameterType="int" resultMap="order_model1">
+	select id ids,name names,price from s_order where user_id=#{id}
+</select>
+
+<resultMap type="user" id="user_model2">
+	<id property="id" column="id"/>
+	<result property="name" column="name"/>
+	<!-- 基于当前查询的用户id到order表找订单 -->
+	<collection property="orders" column="id" select="findOrderByUser_id"></collection>
+</resultMap>
+<select id="findUserAndOrder2" resultMap="user_model2">
+	select id,name from s_user
+</select>
+</mapper>
+
+

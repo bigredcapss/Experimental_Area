@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  ">
+  <!--方式一： 告诉Spring检查当前配置的bean标签中是否所有class对应的类有@AutoWired注解 ,一般情况下不适用此方法-->
+  <!-- <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"></bean> -->
+  <!-- 方式二：让spring检查class中对应的各种注解 
+  @Autowired   AutowiredAnnotationBeanPostProcessor
+  @Resource @PostConstructor @PreDestroy CommonAnnotationBeanPostProcessor
+  专门针对dao层的 ：PersistenceAnnotationBeanPostProcessor
+  @Required RequiredAnnotationBeanPostProcessor
+  
+  -->
+  <!-- 扫描含有注解的类，base-package指向含有注解类的包,如果多个包有注解，逗号隔开 -->
+  <context:component-scan base-package="bean">
+  <!-- 扫描包含哪些注解，一般不写 -->
+  <context:include-filter type="annotation" expression=""/>
+  <!-- 忽略注解 
+  type="annotation":type的属性是注解； expression=""注解的是全限定名
+  type="assignable":type属性是assignable,扫描类的全限定名；xpression=""忽略类中的注解
+  -->
+  <context:exclude-filter type="annotation" expression=""/>
+  </context:component-scan>
+  
+  
+  
+  <!-- <context:annotation-config></context:annotation-config>
+ -->
+ <!--   <bean name="dest" class="bean.DestBean"></bean>
+  <bean name="src" class="bean.SrcBean">
+  	<property name="id" value="100"></property>
+  </bean>
+  
+  <bean name="src1" class="bean.SrcBean">
+  	<property name="id" value="103"></property>
+  </bean> -->
+  </beans>

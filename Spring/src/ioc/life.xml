@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- SpringBean类的生命周期 ：创建 初始化....销毁
+  对象创建的初始化方法执行在创建对象之后;对象的销毁在spring容器关闭的时候开始触发
+  -->
+  <bean name="life" class="bean.Student" init-method="stu_init" destroy-method="destroy">
+  	<property name="id" value="1"></property>
+  	<property name="name" value="kk"></property>
+  	<property name="age" value="13"></property>
+  	<property name="email" value="123@qq.com"></property>
+  </bean>
+  
+  </beans>

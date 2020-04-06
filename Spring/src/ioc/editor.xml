@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd
+  ">
+  <!-- 1.常规配法 -->
+<!--   <bean name="user" class="bean.User">
+  	<property name="id" value="1"></property>
+  	<property name="name" value="oo"></property>
+  	<property name="address" ref="addr"></property>
+  </bean>
+  <bean name="addr" class="bean.Address">
+  	<property name="province" value="河南省"></property>
+  	<property name="city" value="郑州市"></property>
+  	<property name="street" value="科学大道"></property>
+  </bean> -->
+  <!-- 告诉spring容器，address对象的封装当遇到value属性指定的字符串后，用哪个自定义编辑器 -->
+      <bean id="customEditorConfigurer"  class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+         <property name="customEditors">
+            <map>
+<!--           <entry key="bean.Address">
+                  <bean class="ioc.AddressEditor"/>
+               </entry> -->
+               <entry key="bean.Address" value="bean.EditorAddress"></entry>
+            </map>
+         </property>
+      </bean>
+  <!-- 2.使用自定义属性编辑器 -->
+  <!-- myBatis的类型转换器：java中的一个类对应数据库中的一个字段，将来入库的时候，需要将java中的对象装入数据库中的一个字段；
+       Spring中的类型编辑器：数据库中的一个字段，对应java中的一个类，将来取值时，需要将该值转换为java中的一个对象
+   -->
+  <bean name="user" class="bean.User">
+  	<property name="id" value="1"></property>
+  	<property name="name" value="ii"></property>
+  	<!-- 自定义属性编辑器，将value属性中的值转换为需要的对象类型 -->
+  	<property name="address" value="河南省,郑州市,科学大道"></property>
+  </bean>
+  
+  </beans>

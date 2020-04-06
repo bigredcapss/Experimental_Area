@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指定的是和当前映射文件绑定的接口(全包名+类名) -->
+<mapper namespace="dao.StudentMapper">
+<!-- resultMap模板标签，将数据库中的指定字段名和java实体类中的属性名对应关联 -->
+	<resultMap type="bean.Student" id="stu_model">
+		<id property="studId" column="stud_id"/>
+		<result property="name" column="name"/>
+		<result property="email" column="email"/>
+		<result property="dob" column="dob"/>
+	</resultMap>
+
+	<!-- id和接口中的方法名绑定，parameterType和接口中方法的参数绑定 ，参数类型全限定名-->
+	<insert id="saveStudent" parameterType="bean.Student">
+		insert into student (stud_id,name,email,dob) values (#{studId},#{name},#{email},#{dob})
+	</insert>
+	
+	<!--resultType指明将来查询的结果封装的类型 ；parameterType描述方法中一个参数的情况，多个参数则不用该属性-->
+	<!-- 
+	没有指定数据库列名和实体类的属性之间的对应关系：
+	1.先返回类型构建对象
+	2.set拼接select查询的结果集的列名，列名首字母大写；判断拼接后的方法名是否存在，若存在，反射查看方法类型，调用该方法；如果该方法不存在，直接忽略
+	解决方案：起别名
+	 -->
+	<select id="findStudentById" parameterType="java.lang.Integer" resultType="bean.Student">
+		select stud_id studId,name,email,dob from student where stud_id = #{id}
+	</select>
+	
+	<!-- resultType看接口中的方法的返回值，不关注返回值使用什么集合，只关注集合中返回值的类型
+	原因：返回类型是集合，mybatis会自动把封装的对象存储在集和中
+	 -->
+	<select id="findAllStudent" resultType="bean.Student">
+		select stud_id studId,name,email,dob from student
+	</select>
+	
+	<delete id="deleteStudentById" parameterType="Integer">
+		delete from student where stud_id = #{id}
+	</delete>
+	
+	<update id="updateStudent" parameterType="bean.Student">
+		update student set name=#{name},email=#{email},dob=#{dob} where stud_id=#{studId}
+	</update>
+	
+	<insert id="insertStudentPhone" parameterType="bean.Student">
+		insert into student (stud_id,name,email,dob,phone) values (#{studId},#{name},#{email},#{dob},#{phone})
+	</insert>
+	
+	<select id="findStudentPhone" parameterType="java.lang.Integer" resultType="bean.Student">
+		select stud_id studId,name,email,dob,phone from student where stud_id=#{id}
+	</select>
+</mapper>

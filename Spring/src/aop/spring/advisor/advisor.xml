@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd">
+  <bean name="target" class="pojo.BookServiceImpl"></bean>
+  <bean name="after" class="aop.spring.after.AfterAdviceTest"></bean>
+  <bean name="before" class="aop.spring.before.BeforeAdviceTest"></bean>
+  <!-- 对目标对象中的方法选择只有一部分加通知的，用增强器(通知+切面(选择生效方法))
+  RegexpMethodPointcutAdvisor用于将通知和切面进行绑定
+  -->
+  <bean name="advisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+  	<!-- 匹配通知 -->
+  	<property name="advice" ref="before"></property>
+  	<!-- 匹配生效的方法 (可以用正则表达式)
+  	匹配用目标对象的全包名+类名+方法名去匹配
+  	-->
+  	<property name="patterns">
+  		<array>
+  			<value>.*save.*</value>
+  			<value>pojo.BookServiceImpl.get</value>
+  		</array>
+  	</property>
+  </bean>
+  <bean name="proxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+  <!-- 配置目标对象 -->
+  <property name="target" ref="target"></property>
+  <property name="interfaces">
+  	<array>
+  		<value>pojo.BookService</value>
+  	</array>
+  </property>
+  <property name="interceptorNames">
+  	<array>
+  		<value>advisor</value>
+  		<value>after</value>
+  	</array>
+  </property>
+  </bean>
+  
+</beans>

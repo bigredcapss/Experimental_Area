@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <!-- name属性指的是Spring中存储对象的名字，name可以指向多个名字，中间逗号隔开;
+  id属性指的也是Spring中存储对象的名字，唯一表示该bean标签，id属性的值作为一个整体
+   -->
+  <bean name="us" class="bean.UserService">
+  	<property name="id" value="2"></property>
+  	<property name="name" ref="str"></property>
+  	<property name="dao">
+  		<bean class="bean.UserDao"></bean>
+  	</property>
+  
+  </bean>
+  <bean name="str" class="java.lang.String">
+  <!-- 基于构造器的方式注入，index表示该参数在当前构造器中的位置，下标从0开始 
+  Class.forName("java.lang.String").newInstance("test");
+  -->
+  	<constructor-arg index="0" value="test"></constructor-arg>
+  </bean>
+  
+</beans>

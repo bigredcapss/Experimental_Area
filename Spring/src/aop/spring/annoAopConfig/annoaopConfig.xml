@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop.xsd
+  ">
+    <!-- 目标对象的配置 -->
+<!--   <bean name="target1" class="pojo.BookServiceImpl"></bean>
+  <bean name="target2" class="pojo.ProductService"></bean> -->
+  <!-- 自动给当前的目标对象绑定通知，获取代理对象基于目标对象bean表签的名字 -->
+  <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+  <context:component-scan base-package="aop.spring.annoAopConfig,pojo"></context:component-scan>
+
+  </beans>
