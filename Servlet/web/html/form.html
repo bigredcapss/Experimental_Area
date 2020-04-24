@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<!-- action指向的是资源名称，资源名称前面没有斜杠，资源名称替换最后一个斜杠后的内容 -->
+<!-- <form action="registerSer"> -->
+<!-- action前面有斜杠，资源拼接在端口号后面，action中的参数就变成了“项目名称+资源名称” -->
+<!-- 如果action将来请求的是Servlet类，则url-pattern必须和项目名字后面的内容匹配
+如果是post方式请求，参数拼接在请求的体部，参数之间拼接用&符号 -->
+<!-- <form action="/ServletStudy/html/registerSer"> -->
+<!-- <form action="http://127.0.0.1:8888/ServletStudy/html/registerSer" method="post"> -->
+<form action="registerSer" method="post">
+姓名：<input type="text" name="name"><br>
+密码：<input type="password" name="password"><br>
+<!-- hoby=0&hoby=1&hoby=2 -->
+爱好：<input type="checkbox" name="hoby" value="0">篮球
+爱好：<input type="checkbox" name="hoby" value="1">足球
+爱好：<input type="checkbox" name="hoby" value="2">水球<br>
+<input type="submit" value="注册"/>
+<!-- a标签往后台传数据 -->
+<a href="registerSer?hoby=0&hoby=1&hoby=中">点击</a>
+</form>
+</body>
+</html>

@@ -13,7 +13,7 @@
 <!-- 对SpringMVC注解的支持 -->  
 <mvc:annotation-driven></mvc:annotation-driven>
 <!-- 扫描写注解的类有哪些 -->
-<context:component-scan base-package="com.zzuli.web.annotion"></context:component-scan>
+<context:component-scan base-package="annotion"></context:component-scan>
 
 <!-- 配置视图解析器 -->
 <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
@@ -27,7 +27,7 @@
 <mvc:view-controller path="/register2" view-name="register2"/>
 <!-- 解决静态资源被拦截的方法-->
 <mvc:default-servlet-handler/>
-<bean name="user" class="com.zzuli.web.bean.User">
+<bean name="user" class="bean.User">
 	<property name="id" value="1"></property>
 	<property name="name" value="we"></property>
 	<property name="age" value="23"></property>
@@ -36,7 +36,7 @@
 <bean name="formatService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 	<property name="converters">
 		<set>
- 		   <bean class="com.zzuli.web.convert.StringToDateConverter"></bean>
+ 		   <bean class="convert.StringToDateConverter"></bean>
 		</set>
 	</property>
 </bean>

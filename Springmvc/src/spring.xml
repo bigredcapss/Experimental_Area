@@ -29,19 +29,19 @@
   		<!-- 对该资源请求不加入拦截器 -->
   		<!-- <mvc:exclude-mapping path="/hello.do"/> -->
   		<!-- 指的是拦截器 -->
-  		<bean class="com.zzuli.web.intercepter.DefineInterceptor2"></bean>
+  		<bean class="intercepter.DefineInterceptor2"></bean>
   	</mvc:interceptor>
   	<mvc:interceptor>
   		<mvc:mapping path="/hello.do"/>
-  		<bean class="com.zzuli.web.intercepter.TimeInterceptor"></bean>
+  		<bean class="intercepter.TimeInterceptor"></bean>
   	</mvc:interceptor>
   	<mvc:interceptor>
   		<mvc:mapping path="/**"/>
-  		<bean class="com.zzuli.web.intercepter.LoginInterceptor"></bean>
+  		<bean class="intercepter.LoginInterceptor"></bean>
   	</mvc:interceptor>
   </mvc:interceptors>
   <!-- 告诉spring，使用自定义的适配器 -->
-  <bean class="com.zzuli.web.adapter.DefineAdapter"></bean>
+  <bean class="adapter.DefineAdapter"></bean>
   <!-- 配置适配器:默认，控制器实现了接口controller,里面有重写方法的时候配置SimpleControllerHandlerAdapter-->
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
   <!-- 配置视图解析器 ：viewClass表示视图处理使用jstl标签库；prefix表示对逻辑视图拼接的前缀；suffix表示逻辑视图拼接的后缀-->
@@ -59,9 +59,9 @@
   <!-- 解决静态资源被拦截的方法：方式三：默认忽略静态资源 -->
   <mvc:default-servlet-handler/>
   <!-- 处理器 -->
-  <bean name="/hello.do" class="com.zzuli.web.controller.FirstController"></bean>
-  <bean name="/second" class="com.zzuli.web.controller.SecondController"></bean>
-  <bean name="/third" class="com.zzuli.web.controller.ThirdController">
+  <bean name="/hello.do" class="controller.FirstController"></bean>
+  <bean name="/second" class="controller.SecondController"></bean>
+  <bean name="/third" class="controller.ThirdController">
     <!-- 对本次回话，加锁 -->
   	<property name="synchronizeOnSession" value="true"></property>
   	<!-- 本次请求支持提交的方式 -->
@@ -69,7 +69,7 @@
   	<!-- 本次请求，服务器必须给当前浏览器构建过session会话，没有session直接报错 -->
   	<property name="requireSession" value="true"></property>
   </bean>
-  <bean name="/four" class="com.zzuli.web.adapter.FourController"></bean>
-  <bean name="/five" class="com.zzuli.web.intercepter.FiveController"></bean>
-  <bean name="/login" class="com.zzuli.web.controller.LoginController"></bean>
+  <bean name="/four" class="adapter.FourController"></bean>
+  <bean name="/five" class="intercepter.FiveController"></bean>
+  <bean name="/login" class="controller.LoginController"></bean>
   </beans>

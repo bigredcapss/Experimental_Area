@@ -1,11 +1,11 @@
 package web.servlet;
 
-import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 重定向测试
@@ -21,7 +21,7 @@ public class RedirectServlet extends HttpServlet {
 		//资源参数中没有斜杠，拼接在浏览器地址栏最后一个斜杠的后面
 		response.sendRedirect("login.html");
 		
-		//加斜杠，资源则直接拼接在端口号后面，因此需要家项目名
+		//加斜杠，资源则直接拼接在端口号后面，因此需要加项目名
 		//response.sendRedirect("/login.html");
 		//response.sendRedirect("/ServletStudy/login.html");
 		//response.sendRedirect("http://127.0.0.1:8888/ServletStudy/login.html");//写绝对路径也可以

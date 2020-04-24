@@ -67,7 +67,7 @@
   	<!-- 指定加载xml文件的路径，如果有多个路径，中间空格隔开；注：一旦指定了spring文件的路径，默认的spring配置文件不在生效 -->
   		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>classpath:spring_anno.xml</param-value>
+			<param-value>classpath:spring_anno.xml classpath:spring.xml classpath:spring_ex_load_down.xml</param-value>
 		</init-param>
   	<load-on-startup>1</load-on-startup>
   </servlet>

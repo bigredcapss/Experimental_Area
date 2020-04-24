@@ -1,7 +1,5 @@
 package web.servlet;
 
-import java.io.IOException;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,9 +7,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * request session application三大容器对象，三个容器都维护了Map集合，分别对应HttpServletRequest,HttpSession,ServletContext；
+ * 当然还有一个page(jsp页面内有效)，这里不做说明
  * 1.如何获取容器对象，如何设置值，取值
  * 2.EL表达式从容器中取出对象，简化JSP页面
  * 	El表达式专门从容器中取内容的
@@ -21,9 +21,10 @@ import javax.servlet.http.HttpSession;
 	后台			前台
 	request			requestScope
 	HttpSession		sessionScope
-	ServletContext		applciationScope
+	ServletContext	applciationScope
 Request:
-生命周期：request始于浏览器终止于浏览器（浏览器每发出一次http请求，都会构建新的request对象）;request给浏览器传数据是一次性的，只能通过服务器内部跳转给页面传数据
+生命周期：request始于浏览器终止于浏览器（浏览器每发出一次http请求，都会构建新的request对象）;request给浏览器传数据是一次性的，
+ 只能通过服务器内部跳转给页面传数据
 
  */
 @WebServlet("/ContainerServlet")

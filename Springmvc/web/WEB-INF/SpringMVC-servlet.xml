@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans.xsd">
   <!-- 配置映射器：指明url和处理类对象的对应规则
-  <bean name="hello.do" class="com.zzuli.web.controller.FirstController"></bean>
+  <bean name="hello.do" class="controller.FirstController"></bean>
   -->
   <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
   <!-- 配置适配器:默认，控制器实现了接口controller,里面有重写方法的时候配置SimpleControllerHandlerAdapter-->
@@ -16,5 +16,5 @@
 		<property name="suffix" value=".jsp"/>  
   </bean>
   <!-- 处理器 -->
-  <bean name="/hello.do" class="com.zzuli.web.controller.FirstController"></bean>
+  <bean name="/hello.do" class="controller.FirstController"></bean>
   </beans>

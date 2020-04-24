@@ -4,7 +4,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 /**
- * 监听器里面的方法，都是由Tomcat去完成的，只要请求的时服务器的servlet,都会调用初始化，销毁方法
+ * 监听器里面的方法，都是由Tomcat去完成的，只要请求的是服务器的servlet,都会调用初始化，销毁方法
  * @author WE
  * 
     监听器(Listener)
@@ -22,7 +22,7 @@ import javax.servlet.ServletRequestListener;
 	比如:
 	监听request对象的创建和销毁要实现接口ServletRequestListener
 	监听session对象的创建和销毁要实现接口HttpSessionListener
-	监听application对象的创建和销毁要实现接口  
+	监听application对象的创建和销毁要实现ServletContext接口
 
 
  *
