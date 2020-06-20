@@ -1,7 +1,7 @@
 package design.structuralmodel.proxy.dynamicproxy.jdkproxy;
 
 /**
- * Created by Tom.
+ * 抽象主题
  */
 public interface IPerson {
 

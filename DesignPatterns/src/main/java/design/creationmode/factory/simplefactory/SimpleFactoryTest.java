@@ -5,6 +5,9 @@ import design.creationmode.factory.JavaCourse;
 
 /**
  * 简单工厂模式测试
+ *
+ * 以课程工厂为例：
+ * 简单工厂模式：工厂刚开始营业，工厂加工Java,Python两种课程，两种课程的功能也比较单一，只提供录制视频功能；
  */
 public class SimpleFactoryTest {
 

@@ -5,6 +5,8 @@ import design.creationmode.factory.ICourse;
 
 /**
  * 方法工厂测试
+ *
+ * 方法工厂模式：随着工厂的发展，效益增加，把Java,Pyhton单独独立出来，作为子工厂；
  */
 public class FactoryMethodTest {
 
