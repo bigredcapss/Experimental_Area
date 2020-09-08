@@ -19,11 +19,11 @@ public class GPProxy {
 
     public static Object newProxyInstance(GPClassLoader classLoader, Class<?> [] interfaces, GPInvocationHandler h){
        try {
-           //1、动态生成源代码.java文件
+           //1、动态生成代理类源代码.java文件
            String src = generateSrc(interfaces);
 
 //           System.out.println(src);
-           //2、Java文件输出磁盘
+           //2、将代理类的Java文件输出磁盘
            String filePath = GPProxy.class.getResource("").getPath();
 //           System.out.println(filePath);
            File f = new File(filePath + "$Proxy0.java");
@@ -32,19 +32,23 @@ public class GPProxy {
            fw.flush();
            fw.close();
 
-           //3、把生成的.java文件编译成.class文件
+           //3、把生成的代理类的.java文件编译成.class文件
+           //通过 ToolProvider 取得 JavaCompiler 对象，JavaCompiler 对象是动态编译工具的主要对象
            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+           //StandardJavaFileManager 对象主要负责编译文件对象的创建，编译的参数等
            StandardJavaFileManager manage = compiler.getStandardFileManager(null,null,null);
            Iterable iterable = manage.getJavaFileObjects(f);
-
+           //通过 JavaCompiler 对象取得编译 Task
           JavaCompiler.CompilationTask task = compiler.getTask(null,manage,null,null,null,iterable);
+           //调用 call 命令执行编译
           task.call();
+          //关闭
           manage.close();
 
-           //4、编译生成的.class文件加载到JVM中来
+           //4、编译生成的代理类的.class文件加载到JVM中来
           Class proxyClass =  classLoader.findClass("$Proxy0");
           Constructor c = proxyClass.getConstructor(GPInvocationHandler.class);
-          f.delete();
+          //f.delete();
 
            //5、返回字节码重组以后的新的代理对象
            return c.newInstance(h);
