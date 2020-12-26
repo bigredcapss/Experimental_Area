@@ -2,9 +2,6 @@ package design.creationmode.builder.simple;
 
 import lombok.Data;
 
-/**
- * Created by Tom.
- */
 @Data
 public class Course {
 
