@@ -16,6 +16,10 @@ public class MemberDao extends JdbcTemplate
         super(dataSource);
     }
 
+    /**
+     * 钩子方法，该钩子方法是通过继承来实现的
+     * @return
+     */
     public List<?> selectAll(){
         String sql = "select * from t_member";
         return super.executeQuery(sql, new RowMapper<Member>() {
